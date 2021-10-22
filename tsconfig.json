@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
       "target": "es5",
-      "module": "commonjs",
+      "module": "umd",
       "moduleResolution": "node",
       "sourceMap": true,
-      "declaration": true,
-      "outDir": "lib",
+      "declaration": false,
+      "outDir": "tsc",
       "strict": true,
       "experimentalDecorators": true
     },

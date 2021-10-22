@@ -6,8 +6,7 @@
   "types": "./index.d.ts",
   "files": [
     "dist",
-    "lib",
-    "lib-esm",
+    "./index.d.ts",
     "package.json",
     "README.md"
   ],
@@ -25,8 +24,9 @@
   },
   "homepage": "https://github.com/theo-js/eardrum.js/blob/master/README.md",
   "scripts": {
-    "clean": "shx rm -rf dist lib lib-esm",
-    "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack"
+    "clean": "shx rm -rf dist",
+    "build": "npm run clean && webpack",
+    "prod": "npm run build --production"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
