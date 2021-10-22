@@ -6,7 +6,7 @@ module.exports = {
     entry: ['./index.ts'],
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: production ? 'eardrum.min.js' : 'eardrum.js',
+        filename: 'eardrum.js',
         library: 'Eardrum',
         libraryTarget: 'umd',
         libraryExport: 'default',
