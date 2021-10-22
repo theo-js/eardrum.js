@@ -1,2 +1,2 @@
-import eardrum from './lib/eardrum';
+import eardrum from './src/eardrum';
 export default eardrum;

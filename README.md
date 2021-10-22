@@ -1,3 +1,3 @@
 # eardrum.js
 
-Javascript object property reactive event manager
+A Javascript library that binds event listeners to object properties

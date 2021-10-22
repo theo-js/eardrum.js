@@ -2,10 +2,13 @@
     "compilerOptions": {
       "target": "es5",
       "module": "commonjs",
+      "moduleResolution": "node",
+      "sourceMap": true,
       "declaration": true,
-      "outDir": "./dist",
-      "strict": true
+      "outDir": "lib",
+      "strict": true,
+      "experimentalDecorators": true
     },
-    "include": ["./lib", "./index.d.ts"],
+    "include": ["./src", "./index.d.ts"],
     "exclude": ["node_modules", "**/__tests__/*"]
 }
