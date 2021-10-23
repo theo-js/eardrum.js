@@ -27,7 +27,8 @@
     "clean": "shx rm -rf dist",
     "build": "npm run clean && webpack",
     "prod": "npm run build --production",
-    "browser": "shx rm -rf examples/browser/eardrum && webpack -o examples/browser/eardrum && webpack serve"
+    "browser": "shx rm -rf examples/browser/eardrum && webpack -o examples/browser/eardrum && webpack serve",
+    "node": "shx rm -rf examples/node/eardrum && webpack -o examples/node/eardrum && node examples/node"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",

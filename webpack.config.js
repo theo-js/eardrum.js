@@ -7,8 +7,8 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'eardrum.js',
-        libraryExport: 'default',
         umdNamedDefine: true,
+        globalObject: 'this',
         library: {
             name: 'eardrum',
             type: 'umd',
