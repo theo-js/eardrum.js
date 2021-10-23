@@ -2,6 +2,11 @@ interface EardrumConfigureArgs {
     object: EardrumSupportedObject;
     property: EardrumSupportedPropertyKey;
     handler?: unknown;
+    listener: {
+        type: string;
+        target?: any; // defaults to global object
+        bubble?: boolean;
+    };
 }
 
 type EardrumSupportedObject = {

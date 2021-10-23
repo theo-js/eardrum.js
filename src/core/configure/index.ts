@@ -21,13 +21,16 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
 
   // Clear previous event listener
   /*if (lastConfiguredObject.current /* && lastConfiguredObject.current === object *//*) {
-    ejectListener(lastConfiguredObject.current);
+    ejectListener({
+      ...eardrumConfigureArgs,
+      object: lastConfiguredObject.current
+    });
   }*/
   lastConfiguredObject.current = object;
 
   // Attach initial event listener
   if (isFunction(handler)) {
-  	installListener(object);
+  	installListener(eardrumConfigureArgs);
   }
 
   // Define setter/getter for defaultReject
@@ -42,14 +45,14 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
 	  	},
 	    set: function (this: EardrumSupportedObject, newValue: unknown): void {
 		    // Clear previous event listener
-		    ejectListener(object);
+		    ejectListener(eardrumConfigureArgs);
 
 		    // Replace defaultReject
 		    this[_property] = newValue;
 
 		    // Attach new listener
 		    if (isFunction(newValue)) {
-	          installListener(object);
+	        installListener(eardrumConfigureArgs);
 		    }
 	    }
 	  }

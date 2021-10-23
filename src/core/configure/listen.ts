@@ -25,94 +25,100 @@ function listenWithCleanup(
   attachMethodName: string,
   detachMethodName: string
 ) {
-    if (attach) {
-        // Add listener
-      target[attachMethodName](eventType, handler);
-  
-      // Register reference to handler
-      var refToAdd: EventHandlerReference = { handler: handler, eventType: eventType };
-      if (isEardrumSupportedObject(additionalHandlerRefProperties)) {
-          refToAdd = { ...refToAdd, ...additionalHandlerRefProperties };
-      }
-      handlerReferences.push(refToAdd);
-    } else {
-      // Determine which listeners to remove
-      var toRemove = handlerReferences.filter(function filterRefs(ref, index, array) {
-        var shouldBeRemoved;
-        if (typeof listenerRemovalCondition !== 'function') {
-          shouldBeRemoved = true;
-        } else {
-          shouldBeRemoved = listenerRemovalCondition(ref, index, array);
-        }
-  
-        if (shouldBeRemoved) {
-            // Delete refs of removed event listeners
-            handlerReferences.splice(index, 1);
-        }
-        return shouldBeRemoved;
-      });
-  
-      // Remove listeners
-      toRemove.forEach((ref: EventHandlerReference) => {
-        target[detachMethodName](eventType, ref.handler);
-      });
+  if (attach) {
+      // Add listener
+    target[attachMethodName](eventType, handler);
+
+    // Register reference to handler
+    var refToAdd: EventHandlerReference = { handler: handler, eventType: eventType };
+    if (isEardrumSupportedObject(additionalHandlerRefProperties)) {
+        refToAdd = { ...refToAdd, ...additionalHandlerRefProperties };
     }
+    handlerReferences.push(refToAdd);
+  } else {
+    // Determine which listeners to remove
+    var toRemove = handlerReferences.filter(function filterRefs(ref, index, array) {
+      var shouldBeRemoved;
+      if (typeof listenerRemovalCondition !== 'function') {
+        shouldBeRemoved = true;
+      } else {
+        shouldBeRemoved = listenerRemovalCondition(ref, index, array);
+      }
+
+      if (shouldBeRemoved) {
+          // Delete refs of removed event listeners
+          handlerReferences.splice(index, 1);
+      }
+      return shouldBeRemoved;
+    });
+
+    // Remove listeners
+    toRemove.forEach((ref: EventHandlerReference) => {
+      target[detachMethodName](eventType, ref.handler);
+    });
   }
-  function useDefaultReject (a: any, b: any, c: any, d: any) {}
+}
   
-  /**
-   * Add or remove an unhandledRejection event listener from axios instance
-   * Calls listenWithCleanup with appropriate parameters
-   *
-   * @param {boolean} attach Whether the listener needs to be added (true) or removed (false)
-   * @param {object} instance The axios instance that owns defaultReject
-   */
-  function toggleListener(attach: boolean, instance: any) {
-    var handler;
-    var target;
-    var attachMethodName;
-    var detachMethodName;
-    var eventType = 'unhandledrejection';
-  
-    // Axios instance can only remove its own listeners
-    var additionalHandlerRefProperties = { _instanceId: instance._instanceId };
-    var listenerRemovalCondition = function listenerRemovalCondition(ref: any) {
-      return ref._instanceId === instance._instanceId;
+/**
+ * Add or remove an unhandledRejection event listener from axios instance
+ * Calls listenWithCleanup with appropriate parameters
+ *
+ * @param {boolean} attach Whether the listener needs to be added (true) or removed (false)
+ * @param {object} instance The axios instance that owns defaultReject
+ */
+function toggleListener(
+  attach: boolean,
+  {
+    object,
+    handler,
+    listener
+  }: EardrumConfigureArgs
+) {
+  var narrowedHandler = handler as Function;
+  var handlerWrapper;
+  var attachMethodName;
+  var detachMethodName;
+  var { target, type, bubble } = listener;
+
+  // Axios instance can only remove its own listeners
+  var additionalHandlerRefProperties = { _instanceId: object._instanceId };
+  var listenerRemovalCondition = function listenerRemovalCondition(ref: any) {
+    return ref._instanceId === object._instanceId;
+  };
+
+  if (isNodeEnv()) {
+    // For node attach listener on process by default
+    target = process;
+    attachMethodName = 'addListener';
+    detachMethodName = 'removeListener';
+    handlerWrapper = function (e: any, promise: any) {
+      narrowedHandler(object, e, e, promise);
     };
-  
-    if (isNodeEnv()) {
-      // For node attach listener on process
-      target = process;
-      attachMethodName = 'addListener';
-      detachMethodName = 'removeListener';
-      handler = function handleServerSideUnhandledRejection(e: any, promise: any) {
-        useDefaultReject(instance, e, e, promise);
-      };
-    } else if (typeof window !== 'undefined') {
-      // For browsers attach listener on window
-      target = window;
-      attachMethodName = 'addEventListener';
-      detachMethodName = 'removeEventListener';
-      handler = function handleBrowserSideUnhandledRejection(e: any) {
-        useDefaultReject(instance, e.reason, e, e.promise);
-      };
-    } else { return; }
-  
-    listenWithCleanup(attach, handler, target, eventType, listenerRemovalCondition, additionalHandlerRefProperties, attachMethodName, detachMethodName);
-  }
-  
-  /**
-   * Call toggleListener with attach = true
-   * @param {Object} instance The axios instance
-   */
-  export function installListener(object: EardrumSupportedObject) {
-    toggleListener(true, object);
-  }
-  
-  /**
-   * Call toggleListener with attach = false
-   * @param {Object} instance The axios instance
-   */
-  export function ejectListener(object: EardrumSupportedObject) {
-    toggleListener(false, object);
-  }
+  } else if (typeof window !== 'undefined') {
+    // For browsers attach listener on window by default
+    target = window;
+    attachMethodName = 'addEventListener';
+    detachMethodName = 'removeEventListener';
+    handlerWrapper = function (e: any) {
+      narrowedHandler(object, e.reason, e, e.promise);
+    };
+  } else { return; }
+
+  listenWithCleanup(attach, handlerWrapper, target, type, listenerRemovalCondition, additionalHandlerRefProperties, attachMethodName, detachMethodName);
+}
+
+/**
+ * Call toggleListener with attach = true
+ * @param {EardrumConfigureArgs} eardrumConfigureArgs Parameters of the eardrum configure method
+ */
+export function installListener(eardrumConfigureArgs: EardrumConfigureArgs) {
+  toggleListener(true, eardrumConfigureArgs);
+}
+
+/**
+ * Call toggleListener with attach = false
+ * @param {EardrumConfigureArgs} eardrumConfigureArgs Parameters of the eardrum configure method
+ */
+export function ejectListener(eardrumConfigureArgs: EardrumConfigureArgs) {
+  toggleListener(false, eardrumConfigureArgs);
+}
