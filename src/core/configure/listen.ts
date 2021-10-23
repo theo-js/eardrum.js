@@ -11,17 +11,33 @@ interface ListenWithCleanupOptions extends EardrumConfigureArgs {
  *
  * @param {object} options EardrumConfigureArgs with additional parameters
  */
-function listenWithCleanup(options: ListenWithCleanupOptions) {
-  if (attach) {
-      // Add listener
-    target[attachMethodName](eventType, handler);
+function listenWithCleanup({
+  attach,
+  attachMethodName, detachMethodName,
+  object,
+  listener,
+  handler,
+  listenerRemovalCondition,
+  additionalRefProps
+}: ListenWithCleanupOptions) {
+  var { target, bubble } = listener;
+  var eventTarget = target as any; // allow indexation by string
+  var eventType =  listener.type;
 
-    // Register reference to handler
-    var refToAdd: EventHandlerReference = { handler: handler, eventType: eventType };
-    if (isEardrumSupportedObject(additionalHandlerRefProperties)) {
-        refToAdd = { ...refToAdd, ...additionalHandlerRefProperties };
+  if (!eventTarget[attachMethodName] || !eventTarget[detachMethodName]) {
+    throw new Error('EventTarget is invalid');
+  }
+
+  if (attach) {
+    // Add listener
+    eventTarget[attachMethodName](eventType, handler);
+
+    // Store reference to handler
+    var refToStore = { handler, eventType, object } as EventHandlerReference;
+    if (isEardrumSupportedObject(additionalRefProps)) {
+        refToStore = { ...additionalRefProps, ...refToStore };
     }
-    handlerReferences.push(refToAdd);
+    handlerReferences.push(refToStore);
   } else {
     // Determine which listeners to remove
     var toRemove = handlerReferences.filter(function filterRefs(ref, index, array) {
@@ -41,7 +57,7 @@ function listenWithCleanup(options: ListenWithCleanupOptions) {
 
     // Remove listeners
     toRemove.forEach((ref: EventHandlerReference) => {
-      target[detachMethodName](eventType, ref.handler);
+      eventTarget[detachMethodName](eventType, ref.handler);
     });
   }
 }
