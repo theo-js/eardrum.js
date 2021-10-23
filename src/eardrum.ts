@@ -1,4 +1,4 @@
-import configure from "./core/configure";
+import configure from './core/configure';
 
 const eardrum = {
     configure

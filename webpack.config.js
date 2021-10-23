@@ -3,14 +3,17 @@ const TerserPlugin = require('terser-webpack-plugin');
 const production = process.env.NODE_ENV === 'production' || false;
 
 module.exports = {
-    entry: ['./index.ts'],
+    entry: ['./src/eardrum.ts'],
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'eardrum.js',
-        library: 'Eardrum',
-        libraryTarget: 'umd',
         libraryExport: 'default',
-        umdNamedDefine: true
+        umdNamedDefine: true,
+        library: {
+            name: 'eardrum',
+            type: 'umd',
+            export: 'default'
+        }
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js']
@@ -25,11 +28,18 @@ module.exports = {
             }
         ]
     },
-    mode: 'production',
+    mode: production ? 'production' : 'development',
     optimization: {
         minimize: production,
         minimizer: [
             new TerserPlugin({})
         ]
+    },
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'examples', 'browser')
+        },
+        compress: true,
+        port: 9000
     }
 };

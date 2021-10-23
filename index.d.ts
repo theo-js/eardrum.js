@@ -3,6 +3,12 @@ interface EardrumConfigureArgs {
     property: EardrumSupportedPropertyKey;
     handler?: unknown;
 }
+
+type EardrumSupportedObject = {
+    [key: EardrumSupportedPropertyKey]: unknown;
+}
+
+type EardrumSupportedPropertyKey = Exclude<PropertyKey, number>;
     
 interface EventHandlerReference {
     /**
@@ -26,9 +32,3 @@ type ListenerRemovalConditionCallback = (
     index: number,
     array: Array<EventHandlerReference>
 ) => boolean;
-
-type EardrumSupportedObject = {
-    [key: EardrumSupportedPropertyKey]: unknown;
-}
-
-type EardrumSupportedPropertyKey = Exclude<PropertyKey, number>;
