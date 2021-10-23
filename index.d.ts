@@ -19,6 +19,10 @@ interface EventHandlerReference {
      * Type of the handled event
      */
     eventType: string;
+    /**
+     * Allow additional properties
+     */
+    [index: PropertyKey]: any;
 }
 
 /**

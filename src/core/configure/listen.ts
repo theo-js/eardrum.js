@@ -15,13 +15,22 @@ import { isEardrumSupportedObject, isNodeEnv } from '../utils';
  * @param {string} [attachMethodName=addEventListener] The method of target object used to attach a listener;
  * @param {string} [detachMethodName=removeEventListener] The method of target object used to remove a listener;
  */
- function listenWithCleanup(attach: any, handler: any, target: any, eventType: any, listenerRemovalCondition: any, additionalHandlerRefProperties: any, attachMethodName: any, detachMethodName: any) {
+function listenWithCleanup(
+  attach: boolean,
+  handler: Function,
+  target: any,
+  eventType: string,
+  listenerRemovalCondition: ListenerRemovalConditionCallback,
+  additionalHandlerRefProperties: Object,
+  attachMethodName: string,
+  detachMethodName: string
+) {
     if (attach) {
         // Add listener
       target[attachMethodName](eventType, handler);
   
       // Register reference to handler
-      var refToAdd = { handler: handler, eventType: eventType };
+      var refToAdd: EventHandlerReference = { handler: handler, eventType: eventType };
       if (isEardrumSupportedObject(additionalHandlerRefProperties)) {
           refToAdd = { ...refToAdd, ...additionalHandlerRefProperties };
       }
