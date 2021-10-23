@@ -1,12 +1,17 @@
 interface EardrumConfigureArgs {
     object: EardrumSupportedObject;
     property: EardrumSupportedPropertyKey;
-    handler?: unknown;
+    handler?: any | ((e: Event, args: EardrumConfigureArgs) => void);
     listener: {
         type: string;
         target?: any; // defaults to global object
         bubble?: boolean;
     };
+    listenerRemovalCondition?: ListenerRemovalConditionCallback;
+    /**
+     * Additional properties that can be appended to an EventHandlerReference
+     */
+    additionalRefProps?: { [index: PropertyKey]: any };
 }
 
 type EardrumSupportedObject = {

@@ -1,30 +1,17 @@
 import { handlerReferences } from '../storedValues';
 import { isEardrumSupportedObject, isNodeEnv } from '../utils';
 
+interface ListenWithCleanupOptions extends EardrumConfigureArgs {
+  attachMethodName: string;
+  detachMethodName: string;
+  attach: boolean;
+}
 /**
  * Store references of added handlers in an Array and remove from that
  *
- * @param {boolean} attach Whether the listener needs to be added (true) or removed (false)
- * @param {Function} handler The handler which will be added in case attach is true
- * @param {Object} target The object on which listener is attached/removed
- * @param {string} eventType The type of the event we want to listen to
- * @param {ListenerRemovalConditionCallback} listenerRemovalCondition Callback executed during iteration of handlerReferences.
- * - Returns a condition at which a listener should be removed
- * - Removes all listeners by default
- * @param {Object} [additionalHandlerRefProperties] Object to merge with EventHandlerReference
- * @param {string} [attachMethodName=addEventListener] The method of target object used to attach a listener;
- * @param {string} [detachMethodName=removeEventListener] The method of target object used to remove a listener;
+ * @param {object} options EardrumConfigureArgs with additional parameters
  */
-function listenWithCleanup(
-  attach: boolean,
-  handler: Function,
-  target: any,
-  eventType: string,
-  listenerRemovalCondition: ListenerRemovalConditionCallback,
-  additionalHandlerRefProperties: Object,
-  attachMethodName: string,
-  detachMethodName: string
-) {
+function listenWithCleanup(options: ListenWithCleanupOptions) {
   if (attach) {
       // Add listener
     target[attachMethodName](eventType, handler);
@@ -64,52 +51,57 @@ function listenWithCleanup(
  * Calls listenWithCleanup with appropriate parameters
  *
  * @param {boolean} attach Whether the listener needs to be added (true) or removed (false)
- * @param {object} instance The axios instance that owns defaultReject
+ * @param {object} eardrumConfigureArgs Parameters of the configure method
  */
 function toggleListener(
   attach: boolean,
-  {
-    object,
-    handler,
-    listener
-  }: EardrumConfigureArgs
+  eardrumConfigureArgs: EardrumConfigureArgs
 ) {
+  var { object, handler, listener } = eardrumConfigureArgs;
+  var { target } = listener;
   var narrowedHandler = handler as Function;
-  var handlerWrapper;
-  var attachMethodName;
-  var detachMethodName;
-  var { target, type, bubble } = listener;
-
-  // Axios instance can only remove its own listeners
-  var additionalHandlerRefProperties = { _instanceId: object._instanceId };
-  var listenerRemovalCondition = function listenerRemovalCondition(ref: any) {
-    return ref._instanceId === object._instanceId;
-  };
+  var handlerWrapper: Function;
+  var attachMethodName: string;
+  var detachMethodName: string;
 
   if (isNodeEnv()) {
     // For node attach listener on process by default
-    target = process;
+    if (!isEardrumSupportedObject(target)) {
+      target = process;
+    }
     attachMethodName = 'addListener';
     detachMethodName = 'removeListener';
-    handlerWrapper = function (e: any, promise: any) {
-      narrowedHandler(object, e, e, promise);
+    handlerWrapper = function (e: Event) {
+      narrowedHandler(e, eardrumConfigureArgs);
     };
   } else if (typeof window !== 'undefined') {
     // For browsers attach listener on window by default
     target = window;
     attachMethodName = 'addEventListener';
     detachMethodName = 'removeEventListener';
-    handlerWrapper = function (e: any) {
-      narrowedHandler(object, e.reason, e, e.promise);
+    handlerWrapper = function (e: Event) {
+      narrowedHandler(e, eardrumConfigureArgs);
     };
-  } else { return; }
+  } else {
+    throw new Error('This environment does not support eardrum.js');
+  }
 
-  listenWithCleanup(attach, handlerWrapper, target, type, listenerRemovalCondition, additionalHandlerRefProperties, attachMethodName, detachMethodName);
+  listenWithCleanup({
+    ...eardrumConfigureArgs,
+    handler: handlerWrapper,
+    listener: {
+      ...listener,
+      target
+    },
+    attachMethodName,
+    detachMethodName,
+    attach
+  });
 }
 
 /**
  * Call toggleListener with attach = true
- * @param {EardrumConfigureArgs} eardrumConfigureArgs Parameters of the eardrum configure method
+ * @param {object} eardrumConfigureArgs Parameters of the eardrum configure method
  */
 export function installListener(eardrumConfigureArgs: EardrumConfigureArgs) {
   toggleListener(true, eardrumConfigureArgs);
@@ -117,7 +109,7 @@ export function installListener(eardrumConfigureArgs: EardrumConfigureArgs) {
 
 /**
  * Call toggleListener with attach = false
- * @param {EardrumConfigureArgs} eardrumConfigureArgs Parameters of the eardrum configure method
+ * @param {object} eardrumConfigureArgs Parameters of the eardrum configure method
  */
 export function ejectListener(eardrumConfigureArgs: EardrumConfigureArgs) {
   toggleListener(false, eardrumConfigureArgs);

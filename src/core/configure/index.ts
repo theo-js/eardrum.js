@@ -13,7 +13,8 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
   let {
     object,
     property,
-    handler
+    handler,
+    additionalRefProps = {}
   } = validateEardrumConfigureArgs(eardrumConfigureArgs);
 
   // Create private property
