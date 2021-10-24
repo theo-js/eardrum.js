@@ -46,7 +46,7 @@ export const isEardrumSupportedObject = (val: unknown): boolean => {
  * @param {Object} val The value to test
  * @return {boolean} True if value is a plain Object, otherwise false
  */
-export const isEventTargetOrEmitter = (val: { [index: PropertyKey]: any }): boolean => {
+export const isEventTargetOrEmitter = (val?: { [index: PropertyKey]: any }): boolean => {
     if (!val) return false;
     
     if (
