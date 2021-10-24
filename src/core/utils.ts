@@ -41,6 +41,30 @@ export const isEardrumSupportedObject = (val: unknown): boolean => {
 };
 
 /**
+ * Determine if a value is an object is an EventTarget (for DOM) | EventEmitter (for Node)
+ *
+ * @param {Object} val The value to test
+ * @return {boolean} True if value is a plain Object, otherwise false
+ */
+export const isEventTargetOrEmitter = (val: { [index: PropertyKey]: any }): boolean => {
+    if (!val) return false;
+    
+    if (
+        (
+            typeof val['addEventListener'] === 'function' &&
+            typeof val['removeEventListener'] === 'function'
+        ) ||
+        (
+            typeof val['addListener'] === 'function' &&
+            typeof val['removeListener'] === 'function'
+        )
+    ) {
+        return true;
+    }
+    return false;
+};
+
+/**
  * Throw error if object property is not configurable
  * @param {Object} object The object to inspect
  * @param {string|symbol} property The object property to check on

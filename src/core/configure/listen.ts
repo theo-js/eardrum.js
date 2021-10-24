@@ -1,5 +1,5 @@
 import { handlerReferences } from '../storedValues';
-import { isEardrumSupportedObject, isNodeEnv } from '../utils';
+import { isEardrumSupportedObject, isEventTargetOrEmitter, isNodeEnv } from '../utils';
 
 interface ListenWithCleanupOptions extends EardrumConfigureArgs {
   attachMethodName: string;
@@ -36,6 +36,7 @@ function listenWithCleanup({
 
   if (attach) {
     // Add listener
+    console.log(eventTarget);
     eventTarget[attachMethodName](eventType, handler, bubble === true ? true : false);
 
     // Store reference to handler
@@ -97,7 +98,7 @@ function toggleListener(
 
   if (isNodeEnv()) {
     // For node attach listener on process by default
-    if (!isEardrumSupportedObject(target)) {
+    if (!isEventTargetOrEmitter(target)) {
       target = process;
     }
     attachMethodName = 'addListener';
@@ -107,7 +108,9 @@ function toggleListener(
     };
   } else if (typeof window !== 'undefined') {
     // For browsers attach listener on window by default
-    target = window;
+    if (!isEventTargetOrEmitter(target)) {
+      target = window;
+    }
     attachMethodName = 'addEventListener';
     detachMethodName = 'removeEventListener';
     handlerWrapper = function (e: Event) {
