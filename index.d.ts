@@ -33,6 +33,10 @@ interface EventHandlerReference {
      */
     eventType: string;
     /**
+     * Bubbling or Capture
+     */
+    bubble: boolean;
+    /**
      * Ref to the object configured by eardrum
      */
     object: EardrumSupportedObject;

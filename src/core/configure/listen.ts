@@ -36,10 +36,10 @@ function listenWithCleanup({
 
   if (attach) {
     // Add listener
-    eventTarget[attachMethodName](eventType, handler);
+    eventTarget[attachMethodName](eventType, handler, bubble === true ? true : false);
 
     // Store reference to handler
-    var refToStore = { handler, eventType, object } as EventHandlerReference;
+    var refToStore = { handler, eventType, bubble, object, } as EventHandlerReference;
     if (isEardrumSupportedObject(additionalRefProps)) {
         refToStore = { ...additionalRefProps, ...refToStore };
     }
@@ -63,7 +63,7 @@ function listenWithCleanup({
 
     // Remove listeners
     toRemove.forEach((ref: EventHandlerReference) => {
-      eventTarget[detachMethodName](eventType, ref.handler);
+      eventTarget[detachMethodName](eventType, ref.handler, ref.bubble);
     });
   }
 }
@@ -87,7 +87,8 @@ function toggleListener(
     target?: EventTarget | import('events').EventEmitter; // defaults to global object
     bubble?: boolean;
   }
-  var { target } = narrowedListener;
+  let { target, bubble } = narrowedListener;
+  const narrowedBubble = bubble === true ? true : false;
   var narrowedHandler = handler as Function;
   var handlerWrapper: Function;
 
@@ -121,7 +122,8 @@ function toggleListener(
     handler: handlerWrapper,
     listener: {
       ...narrowedListener,
-      target
+      target,
+      bubble: narrowedBubble
     },
     additionalRefProps: narrowedAdditionalRefProps,
     attachMethodName,
