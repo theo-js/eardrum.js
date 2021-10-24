@@ -141,7 +141,7 @@ describe('configure method helper', () => {
 	it('GIVEN changed value of configured property THEN should use listenerRemovalCondition function', () => {
 		const property = 'MY_PROPERTY';
 		const object = { [property]: 'INITIAL_VALUE' };
-		const mockFn = jest.fn((ref: any, i: number, arr: any): any => console.log(arr));
+		const mockFn = jest.fn();
 		eardrum.configure({
 			object,
 			property,
@@ -154,5 +154,34 @@ describe('configure method helper', () => {
 		object[property] = 'NEW_VALUE';
 
 		expect(mockFn).toHaveBeenCalled();
+	});
+
+	it('GIVEN provided a listenerRemovalCondition THEN should receive all required params', () => {
+		const property = 'MY_PROPERTY';
+		const object = { [property]: 'INITIAL_VALUE' };
+		const type = 'keydown';
+		const useCapture = true;
+		const mockFn = jest.fn();
+		eardrum.configure({
+			object,
+			property,
+			handler: jest.fn(),
+			listenerRemovalCondition: mockFn,
+			listener: {
+				type,
+				options: useCapture
+			}
+		});
+
+		// Set new value
+		object[property] = 'NEW_VALUE';
+
+		const [ref, index, refs] = mockFn.mock.calls[0];
+		expect(refs[0]).toStrictEqual(ref);
+		expect(typeof index === 'number').toBe(true);
+		expect(typeof ref.handler === 'function').toBe(true);
+		expect(ref.eventType === type).toBe(true);
+		expect(ref.object).toStrictEqual(object);
+		expect(ref.options).toStrictEqual(useCapture);
 	});
 });
