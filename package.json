@@ -29,7 +29,7 @@
     "prod": "npm run build --production",
     "browser": "shx rm -rf examples/browser/eardrum && webpack -o examples/browser/eardrum && webpack serve",
     "node": "shx rm -rf examples/node/eardrum && webpack -o examples/node/eardrum && nodemon examples/node",
-    "test": "jest"
+    "test": "jest --watchAll"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
