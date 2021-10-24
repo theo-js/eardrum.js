@@ -6,9 +6,9 @@ interface ListenWithCleanupOptions extends EardrumConfigureArgs {
   detachMethodName: string;
   attach: boolean;
   listener: {
-    type?: string;
-    target?: EventTarget | import('events').EventEmitter; // defaults to global object
-    bubble?: boolean;
+    type: string;
+    target: EardrumTarget; // defaults to global object
+    options?: EventListenerOptions;
   };
   additionalRefProps: { [index: PropertyKey]: any }
 }
@@ -26,21 +26,20 @@ function listenWithCleanup({
   listenerRemovalCondition,
   additionalRefProps
 }: ListenWithCleanupOptions): void {
-  var { target, bubble } = listener;
+  var { target, options } = listener;
   var eventTarget = target as any; // allow indexation by string
   var eventType =  listener.type;
 
   if (!eventTarget[attachMethodName] || !eventTarget[detachMethodName]) {
-    throw new Error('EventTarget is invalid');
+    throw new Error('Event target is invalid');
   }
 
   if (attach) {
     // Add listener
-    console.log(eventTarget);
-    eventTarget[attachMethodName](eventType, handler, bubble === true ? true : false);
+    eventTarget[attachMethodName](eventType, handler, options);
 
     // Store reference to handler
-    var refToStore = { handler, eventType, bubble, object, } as EventHandlerReference;
+    var refToStore = { handler, eventType, options, object, target: eventTarget } as EventHandlerReference;
     if (isEardrumSupportedObject(additionalRefProps)) {
         refToStore = { ...additionalRefProps, ...refToStore };
     }
@@ -64,7 +63,7 @@ function listenWithCleanup({
 
     // Remove listeners
     toRemove.forEach((ref: EventHandlerReference) => {
-      eventTarget[detachMethodName](eventType, ref.handler, ref.bubble);
+      eventTarget[detachMethodName](eventType, ref.handler, ref.options);
     });
   }
 }
@@ -85,12 +84,12 @@ function toggleListener(
   const narrowedAdditionalRefProps = additionalRefProps as { [index: PropertyKey]: any };
   const narrowedListener = listener as {
     type?: string;
-    target?: EventTarget | import('events').EventEmitter; // defaults to global object
-    bubble?: boolean;
+    target?: EardrumTarget; // defaults to global object
+    options?: EventListenerOptions;
   }
-  let { target, bubble } = narrowedListener;
-  const narrowedBubble = bubble === true ? true : false;
+  let { type, target } = narrowedListener;
   var narrowedHandler = handler as Function;
+  var narrowedTarget = target as EardrumTarget;
   var handlerWrapper: Function;
 
   var attachMethodName: string;
@@ -98,8 +97,8 @@ function toggleListener(
 
   if (isNodeEnv()) {
     // For node attach listener on process by default
-    if (!isEventTargetOrEmitter(target)) {
-      target = process;
+    if (!isEventTargetOrEmitter(narrowedTarget)) {
+      narrowedTarget = process;
     }
     attachMethodName = 'addListener';
     detachMethodName = 'removeListener';
@@ -108,8 +107,8 @@ function toggleListener(
     };
   } else if (typeof window !== 'undefined') {
     // For browsers attach listener on window by default
-    if (!isEventTargetOrEmitter(target)) {
-      target = window;
+    if (!isEventTargetOrEmitter(narrowedTarget)) {
+      narrowedTarget = window;
     }
     attachMethodName = 'addEventListener';
     detachMethodName = 'removeEventListener';
@@ -125,8 +124,8 @@ function toggleListener(
     handler: handlerWrapper,
     listener: {
       ...narrowedListener,
-      target,
-      bubble: narrowedBubble
+      target: narrowedTarget,
+      type: type || ''
     },
     additionalRefProps: narrowedAdditionalRefProps,
     attachMethodName,

@@ -1,7 +1,9 @@
 import configure from './core/configure';
+import reset from './core/reset';
 
 const eardrum = {
-    configure
+    configure,
+    reset
 };
 
 export default eardrum;

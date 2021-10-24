@@ -65,6 +65,24 @@ export const isEventTargetOrEmitter = (val?: { [index: PropertyKey]: any }): boo
 };
 
 /**
+ * Removes all indexes from an array
+ *
+ * @param {Array} val The other to empty
+ */
+export const emptyArray = (val: Array<unknown>): void => {
+    if (
+        typeof val.length !== 'number' ||
+        typeof val.pop !== 'function' ||
+        !Array.isArray(val)
+    ) {
+        throw new Error('Invalid argument passed to emptyArray: argument should be an array');
+    }
+    while(val.length > 0) {
+        val.pop();
+    } 
+};
+
+/**
  * Throw error if object property is not configurable
  * @param {Object} object The object to inspect
  * @param {string|symbol} property The object property to check on

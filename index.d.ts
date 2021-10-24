@@ -1,3 +1,6 @@
+/**
+ * Parameters of the eardrum.configure method
+ */
 interface EardrumConfigureArgs {
     object: EardrumSupportedObject;
     property: EardrumSupportedPropertyKey;
@@ -5,8 +8,11 @@ interface EardrumConfigureArgs {
     handler?: any | EardrumEventHandler;
     listener?: {
         type?: string;
-        target?: EventTarget | import('events').EventEmitter; // defaults to global object
-        bubble?: boolean;
+        /**
+         * Defaults to global object
+         */
+        target?: EardrumTarget;
+        options?: EventListenerOptions
     };
     listenerRemovalCondition?: ListenerRemovalCondition;
     /**
@@ -18,6 +24,8 @@ interface EardrumConfigureArgs {
 type EardrumSupportedObject = {
     [key: EardrumSupportedPropertyKey]: unknown;
 }
+
+type EardrumTarget = EventTarget | import('events').EventEmitter;
 
 type EardrumSupportedPropertyKey = Exclude<PropertyKey, number>;
 
@@ -33,13 +41,17 @@ interface EventHandlerReference {
      */
     eventType: string;
     /**
-     * Bubbling or Capture
+     * EventListenerOptions
      */
-    bubble: boolean;
+    options?: EventListenerOptions;
     /**
      * Ref to the object configured by eardrum
      */
     object: EardrumSupportedObject;
+    /**
+     * Event target
+     */
+    target: EardrumEventHandler;
     /**
      * Allow additional properties
      */
@@ -53,7 +65,14 @@ interface EventHandlerReference {
  * @return {boolean} Whether we want to remove the handler or not
  */
 type ListenerRemovalCondition = (
-    ref: EventHandlerReference,
-    index: number,
-    array: Array<EventHandlerReference>
+    ref?: EventHandlerReference,
+    index?: number,
+    array?: Array<EventHandlerReference>
 ) => boolean;
+
+type EventManipulationMethodName = (
+    | 'addEventListener'
+    | 'removeEventListener'
+    | 'addListener'
+    | 'removeListener'
+);

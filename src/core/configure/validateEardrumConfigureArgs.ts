@@ -9,7 +9,7 @@ export default function (eardrumConfigureArgs: EardrumConfigureArgs): EardrumCon
         listener = {
             type: '',
             target: undefined,
-            bubble: false
+            options: undefined
         }
     } = eardrumConfigureArgs;
     // Validate object
