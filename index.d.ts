@@ -1,6 +1,7 @@
 interface EardrumConfigureArgs {
     object: EardrumSupportedObject;
     property: EardrumSupportedPropertyKey;
+    value?: unknown;
     handler?: any | EardrumEventHandler;
     listener: {
         type: string;

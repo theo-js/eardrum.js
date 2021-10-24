@@ -13,6 +13,7 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
   let {
     object,
     property,
+    value,
     handler,
     additionalRefProps = {}
   } = validateEardrumConfigureArgs(eardrumConfigureArgs);
@@ -37,7 +38,7 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
   // Define setter/getter for defaultReject
   Object.defineProperties(object, {
   	[_property]: {
-  		value: object[property],
+  		value: typeof value === 'undefined' ? object[property] : value,
   		writable: true, configurable: true, enumerable: false
   	},
   	[property]: {
