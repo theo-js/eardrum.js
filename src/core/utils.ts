@@ -49,17 +49,17 @@ export const isEardrumSupportedObject = (val: unknown): boolean => {
 export const throwIfPropIsNotConfigurable = (
     { object, key }: { object: Object, key: EardrumSupportedPropertyKey },
     msg?: string
-): never|PropertyDescriptor => {
+): never|undefined|PropertyDescriptor => {
     // Default error msg
     if (typeof msg !== 'string') msg = `Error: property '${key.toString()}' is not configurable`;
 
     // Get property descriptor
     const descriptor = Object.getOwnPropertyDescriptor(object, key);
-    if (typeof descriptor === 'undefined') throw new Error(`Property ${key.toString()} of ${object} has no descriptor`);
-
-    // Throw if not configurable
-    if (!descriptor.configurable) {
-        throw new Error(msg);
+    if (typeof descriptor !== 'undefined') {
+        // Throw if not configurable
+        if (!descriptor.configurable) {
+            throw new Error(msg);
+        } 
     }
 
     // Otherwise return property descriptor
