@@ -38,7 +38,7 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
   Object.defineProperties(object, {
   	[_property]: {
   		value: object[property],
-  		writable: true, configurable: true
+  		writable: true, configurable: true, enumerable: false
   	},
   	[property]: {
 	  	get: function (this: EardrumSupportedObject): unknown {
