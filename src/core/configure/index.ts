@@ -39,7 +39,9 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
   Object.defineProperties(object, {
   	[_property]: {
   		value: typeof value === 'undefined' ? object[property] : value,
-  		writable: true, configurable: true, enumerable: false
+  		writable: true,
+      configurable: true,
+      enumerable: false
   	},
   	[property]: {
 	  	get: function (this: EardrumSupportedObject): unknown {
@@ -56,7 +58,9 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
 		    if (isFunction(newValue)) {
 	        installListener(eardrumConfigureArgs);
 		    }
-	    }
+	    },
+      configurable: true,
+      enumerable: true
 	  }
   });
 };
