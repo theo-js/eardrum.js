@@ -4,7 +4,13 @@ export default function (eardrumConfigureArgs: EardrumConfigureArgs): EardrumCon
     let {
         object,
         property,
-        handler
+        handler,
+        additionalRefProps = {},
+        listener = {
+            type: '',
+            target: undefined,
+            bubble: false
+        }
     } = eardrumConfigureArgs;
     // Validate object
     if (!isEardrumSupportedObject(object)) throw new Error('Eardrum does not support this object');
@@ -25,5 +31,12 @@ export default function (eardrumConfigureArgs: EardrumConfigureArgs): EardrumCon
         }
     } 
 
-    return eardrumConfigureArgs;
+    return {
+        ...eardrumConfigureArgs,
+        object,
+        property,
+        handler,
+        additionalRefProps,
+        listener
+    };
 };
