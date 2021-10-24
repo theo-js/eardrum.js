@@ -10,13 +10,13 @@ import { isFunction, createPrivatePropName } from '../utils';
  */
 export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): void {
   // Validation
-  let {
+  const eardrumConfigureArgsValidated = validateEardrumConfigureArgs(eardrumConfigureArgs);
+  const {
     object,
     property,
     value,
-    handler,
-    additionalRefProps = {}
-  } = validateEardrumConfigureArgs(eardrumConfigureArgs);
+    handler
+  } = eardrumConfigureArgsValidated;
 
   // Create private property
   const _property = createPrivatePropName(property);
@@ -24,7 +24,7 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
   // Clear previous event listener
   /*if (lastConfiguredObject.current /* && lastConfiguredObject.current === object *//*) {
     ejectListener({
-      ...eardrumConfigureArgs,
+      ...eardrumConfigureArgsValidated,
       object: lastConfiguredObject.current
     });
   }*/
@@ -32,7 +32,7 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
 
   // Attach initial event listener
   if (isFunction(handler)) {
-  	installListener(eardrumConfigureArgs);
+  	installListener(eardrumConfigureArgsValidated);
   }
 
   // Define setter/getter for defaultReject
@@ -49,14 +49,14 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
 	  	},
 	    set: function (this: EardrumSupportedObject, newValue: unknown): void {
 		    // Clear previous event listener
-		    ejectListener(eardrumConfigureArgs);
+		    ejectListener(eardrumConfigureArgsValidated);
 
 		    // Replace defaultReject
 		    this[_property] = newValue;
 
 		    // Attach new listener
 		    if (isFunction(newValue)) {
-	        installListener(eardrumConfigureArgs);
+	        installListener(eardrumConfigureArgsValidated);
 		    }
 	    },
       configurable: true,

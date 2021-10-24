@@ -3,8 +3,8 @@ interface EardrumConfigureArgs {
     property: EardrumSupportedPropertyKey;
     value?: unknown;
     handler?: any | EardrumEventHandler;
-    listener: {
-        type: string;
+    listener?: {
+        type?: string;
         target?: EventTarget | import('events').EventEmitter; // defaults to global object
         bubble?: boolean;
     };
