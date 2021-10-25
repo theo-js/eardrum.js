@@ -8,10 +8,11 @@ export default class Eardrum {
 		this.reset = reset.bind(this);
 	}
 
-	public configure: (args: EardrumConfigureArgs) => void;
-	public reset: () => void;
+	public readonly configure: (args: EardrumConfigureArgs) => void;
+	public readonly reset: () => void;
 
-	public Eardrum = Eardrum;
+	public readonly Eardrum = Eardrum;
+	public readonly EadrumRef = EardrumRef;
 
 	// Stored values
 	readonly refs: EardrumRef[] = [];
