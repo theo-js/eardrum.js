@@ -12,7 +12,7 @@ export default class Eardrum {
 	public readonly reset: () => void;
 
 	public readonly Eardrum = Eardrum;
-	public readonly EadrumRef = EardrumRef;
+	public readonly EardrumRef = EardrumRef;
 
 	// Stored values
 	readonly refs: EardrumRef[] = [];
