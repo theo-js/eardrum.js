@@ -2,16 +2,6 @@ import Eardrum from '../Eardrum';
 import EardrumRef from '../Ref';
 import { isNodeEnv, emptyArray } from '../utils';
 
-export function resetStoredValues (this: Eardrum): boolean {
-	try {
-		emptyArray(this.refs);
-		this.lastConfiguredObject.current = null;
-		return true;
-	} catch (error) {
-		return false;
-	}
-};
-
 /* Remove all listeners and reset stored values */
 export default function reset (this: Eardrum): boolean {
 	try {
@@ -23,7 +13,12 @@ export default function reset (this: Eardrum): boolean {
 		});
 
 		// Reset stored values
-		(() => resetStoredValues.bind(this))();
+		try {
+			emptyArray(this.refs);
+			this.lastConfiguredObject.current = null;
+		} catch (err) {
+			return false;
+		}
 		
 		return true;
 	} catch (error) {

@@ -15,6 +15,8 @@ export default class Eardrum {
 	public readonly EardrumRef = EardrumRef;
 
 	// Stored values
-	readonly refs: EardrumRef[] = [];
-	readonly lastConfiguredObject: { current: EardrumSupportedObject|null } = { current: null };
+	public readonly refs: EardrumRef[] = [];
+	public readonly lastConfiguredObject: {
+		current: EardrumSupportedObject|null
+	} = { current: null };
 };
