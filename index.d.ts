@@ -45,13 +45,17 @@ interface EventHandlerReference {
      */
     options?: EventListenerOptions;
     /**
-     * Ref to the object configured by eardrum
+     * Ref to the object whose property was configured by eardrum
      */
     object: EardrumSupportedObject;
     /**
+     * Property that was configured by eardrum
+     */
+    property: EardrumSupportedPropertyKey;
+    /**
      * Event target
      */
-    target: EardrumEventHandler;
+    target: EardrumTarget;    
     /**
      * Allow additional properties
      */
@@ -59,15 +63,15 @@ interface EventHandlerReference {
 }
 
 /**
- * @param {EventHandlerReference} ref Reference to the handler that should be removed or not
+ * @param {object} ref EardrumRef to the handler that should be removed or not
  * @param {number} index Index of the current ref in the handlerReferences array
- * @param {Array} array Whole handlerReferences array
+ * @param {Array} array Whole EardrumRef array
  * @return {boolean} Whether we want to remove the handler or not
  */
 type ListenerRemovalCondition = (
-    ref?: EventHandlerReference,
+    ref?: import('./src/core/Ref').default,
     index?: number,
-    array?: Array<EventHandlerReference>
+    array?: Array<import('./src/core/Ref').default>
 ) => boolean;
 
 type EventManipulationMethodName = (

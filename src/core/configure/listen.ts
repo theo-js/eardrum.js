@@ -1,4 +1,5 @@
 import Eardrum from '../Eardrum';
+import EardrumRef from '../Ref';
 import { isEardrumSupportedObject, isEventTargetOrEmitter, isNodeEnv } from '../utils';
 
 interface ListenWithCleanupOptions extends EardrumConfigureArgs {
@@ -21,6 +22,7 @@ function listenWithCleanup(this: Eardrum, {
   attach,
   attachMethodName, detachMethodName,
   object,
+  property,
   listener,
   handler,
   listenerRemovalCondition,
@@ -39,14 +41,23 @@ function listenWithCleanup(this: Eardrum, {
     eventTarget[attachMethodName](eventType, handler, options);
 
     // Store reference to handler
-    var refToStore = { handler, eventType, options, object, target: eventTarget } as EventHandlerReference;
+    let refParams: EventHandlerReference = {
+      handler,
+      eventType,
+      options,
+      object,
+      property,
+      target: eventTarget,
+      eardrumInstanceRefs: this.refs
+    };
     if (isEardrumSupportedObject(additionalRefProps)) {
-        refToStore = { ...additionalRefProps, ...refToStore };
+        refParams = { ...additionalRefProps, ...refParams };
     }
+    const refToStore = new EardrumRef(refParams);
     this.refs.push(refToStore);
   } else {
     // Determine which listeners to remove
-    var toRemove = this.refs.filter((ref: EventHandlerReference, index: number, array: EventHandlerReference[]) => {
+    var toRemove = this.refs.filter((ref: EardrumRef, index: number, array: Array<EardrumRef>) => {
       var shouldBeRemoved;
       if (typeof listenerRemovalCondition !== 'function') {
         shouldBeRemoved = true;
@@ -62,7 +73,7 @@ function listenWithCleanup(this: Eardrum, {
     });
 
     // Remove listeners
-    toRemove.forEach((ref: EventHandlerReference) => {
+    toRemove.forEach((ref: EardrumRef) => {
       eventTarget[detachMethodName](eventType, ref.handler, ref.options);
     });
   }
@@ -81,7 +92,7 @@ function toggleListener(
   eardrumConfigureArgs: EardrumConfigureArgs
 ): void|never {
   // Typescript narrowing
-  const { object, handler, listener, additionalRefProps } = eardrumConfigureArgs;
+  const { handler, listener, additionalRefProps } = eardrumConfigureArgs;
   const narrowedAdditionalRefProps = additionalRefProps as { [index: PropertyKey]: any };
   const narrowedListener = listener as {
     type?: string;

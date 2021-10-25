@@ -1,4 +1,5 @@
 import Eardrum from '../Eardrum';
+import EardrumRef from '../Ref';
 import { isNodeEnv, emptyArray } from '../utils';
 
 export function resetStoredValues (this: Eardrum): boolean {
@@ -16,7 +17,7 @@ export default function reset (this: Eardrum): boolean {
 	try {
 		// Remove all listeners
 		const detachMethod = isNodeEnv() ? 'removeListener' : 'removeEventListener';
-		this.refs.forEach((ref: EventHandlerReference) => {
+		this.refs.forEach((ref: EardrumRef) => {
 			const narrowedTarget = ref.target as any;
 			narrowedTarget[detachMethod](ref.eventType, ref.handler, ref.options);
 		});
