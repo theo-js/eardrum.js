@@ -1,4 +1,4 @@
-import { lastConfiguredObject } from '../storedValues';
+import Eardrum from '../Eardrum';
 import validateEardrumConfigureArgs from './validateEardrumConfigureArgs';
 import { installListener, ejectListener } from './listen';
 import { isFunction, createPrivatePropName } from '../utils';
@@ -8,7 +8,7 @@ import { isFunction, createPrivatePropName } from '../utils';
  *
  * @param {object} eardrumConfigureArgs Options object
  */
-export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): void {
+export default function configure (this: Eardrum, eardrumConfigureArgs: EardrumConfigureArgs): void {
   // Validation
   const eardrumConfigureArgsValidated = validateEardrumConfigureArgs(eardrumConfigureArgs);
   const {
@@ -18,21 +18,28 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
     handler
   } = eardrumConfigureArgsValidated;
 
+  // Bind context
+  const install = installListener.bind(this, eardrumConfigureArgsValidated);
+  const eject = ejectListener.bind(this, eardrumConfigureArgsValidated);
+  /*
+  const ejectLast = ejectListener.bind(this, {
+    ...eardrumConfigureArgsValidated,
+    object: lastConfiguredObject.current
+  });
+  */
+
   // Create private property
   const _property = createPrivatePropName(property);
 
   // Clear previous event listener
-  /*if (lastConfiguredObject.current /* && lastConfiguredObject.current === object *//*) {
-    ejectListener({
-      ...eardrumConfigureArgsValidated,
-      object: lastConfiguredObject.current
-    });
+  /*if (this.lastConfiguredObject.current /* && this.lastConfiguredObject.current === object *//*) {
+    ejectLast();
   }*/
-  lastConfiguredObject.current = object;
+  this.lastConfiguredObject.current = object;
 
   // Attach initial event listener
   if (isFunction(handler)) {
-  	installListener(eardrumConfigureArgsValidated);
+  	install();
   }
 
   // Define setter/getter for defaultReject
@@ -49,14 +56,14 @@ export default function configure (eardrumConfigureArgs: EardrumConfigureArgs): 
 	  	},
 	    set: function (this: EardrumSupportedObject, newValue: unknown): void {
 		    // Clear previous event listener
-		    ejectListener(eardrumConfigureArgsValidated);
+		    eject();
 
 		    // Replace defaultReject
 		    this[_property] = newValue;
 
 		    // Attach new listener
 		    if (isFunction(newValue)) {
-	        installListener(eardrumConfigureArgsValidated);
+	        install();
 		    }
 	    },
       configurable: true,

@@ -1,4 +1,4 @@
-import { handlerReferences } from '../storedValues';
+import Eardrum from '../Eardrum';
 import { isEardrumSupportedObject, isEventTargetOrEmitter, isNodeEnv } from '../utils';
 
 interface ListenWithCleanupOptions extends EardrumConfigureArgs {
@@ -17,7 +17,7 @@ interface ListenWithCleanupOptions extends EardrumConfigureArgs {
  *
  * @param {object} options EardrumConfigureArgs with additional parameters
  */
-function listenWithCleanup({
+function listenWithCleanup(this: Eardrum, {
   attach,
   attachMethodName, detachMethodName,
   object,
@@ -43,10 +43,10 @@ function listenWithCleanup({
     if (isEardrumSupportedObject(additionalRefProps)) {
         refToStore = { ...additionalRefProps, ...refToStore };
     }
-    handlerReferences.push(refToStore);
+    this.refs.push(refToStore);
   } else {
     // Determine which listeners to remove
-    var toRemove = handlerReferences.filter(function filterRefs(ref, index, array) {
+    var toRemove = this.refs.filter((ref: EventHandlerReference, index: number, array: EventHandlerReference[]) => {
       var shouldBeRemoved;
       if (typeof listenerRemovalCondition !== 'function') {
         shouldBeRemoved = true;
@@ -56,7 +56,7 @@ function listenWithCleanup({
 
       if (shouldBeRemoved) {
           // Delete refs of removed event listeners
-          handlerReferences.splice(index, 1);
+          this.refs.splice(index, 1);
       }
       return shouldBeRemoved;
     });
@@ -76,6 +76,7 @@ function listenWithCleanup({
  * @param {object} eardrumConfigureArgs Parameters of the configure method
  */
 function toggleListener(
+  this: Eardrum,
   attach: boolean,
   eardrumConfigureArgs: EardrumConfigureArgs
 ): void|never {
@@ -119,7 +120,7 @@ function toggleListener(
     throw new Error('This environment does not support eardrum.js');
   }
 
-  listenWithCleanup({
+  (listenWithCleanup.bind(this, {
     ...eardrumConfigureArgs,
     handler: handlerWrapper,
     listener: {
@@ -131,21 +132,21 @@ function toggleListener(
     attachMethodName,
     detachMethodName,
     attach
-  });
+  }))();
 }
 
 /**
  * Call toggleListener with attach = true
  * @param {object} eardrumConfigureArgs Parameters of the eardrum configure method
  */
-export function installListener(eardrumConfigureArgs: EardrumConfigureArgs) {
-  toggleListener(true, eardrumConfigureArgs);
+export function installListener(this: Eardrum, eardrumConfigureArgs: EardrumConfigureArgs) {
+  (toggleListener.bind(this, true, eardrumConfigureArgs))();
 }
 
 /**
  * Call toggleListener with attach = false
  * @param {object} eardrumConfigureArgs Parameters of the eardrum configure method
  */
-export function ejectListener(eardrumConfigureArgs: EardrumConfigureArgs) {
-  toggleListener(false, eardrumConfigureArgs);
+export function ejectListener(this: Eardrum, eardrumConfigureArgs: EardrumConfigureArgs) {
+  (toggleListener.bind(this, false, eardrumConfigureArgs))();
 }

@@ -3,13 +3,15 @@
  * @param {string|symbol} publicPropName The public property identifier from which to derive private prop name
  * @returns {string|symbol}
  */
-export const createPrivatePropName = <T extends EardrumSupportedPropertyKey>(publicPropName: T): T => {
-    if (typeof publicPropName === 'number') throw new Error('Eardrum does not support property keys of type number');
+export const createPrivatePropName = <T extends EardrumSupportedPropertyKey>(publicPropName: T): T|never => {
     if (typeof publicPropName === 'symbol') {
         // Return new symbol
         return Symbol() as any;
     }
-    return `_${publicPropName}` as any;
+    if (typeof publicPropName === 'string') {
+        return `_${publicPropName}` as any;
+    }
+    throw new Error('Eardrum does not support property keys of type ' + typeof publicPropName);
 };
 
 /**
