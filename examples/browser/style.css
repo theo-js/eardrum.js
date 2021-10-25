@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=PT+Sans+Narrow&family=Poiret+One&display=swap');
+
+:root {
+    font-size: 17px;
+    --bg: rgb(242, 244, 252);
+    --bg-dark: rgb(0, 64, 80);
+    --txt: rgb(77, 77, 77);
+    --txt-lt: var(--bg);
+    --lt-border: rgba(167, 179, 192, 0.466);
+    --hlt: rgb(0, 136, 170);
+    --hlt-tp: #0068aa40;
+    --hlt2: rgb(185, 182, 0);
+    --hlt2-tp: rgba(167, 170, 0, .25);
+}
+
+html, body {
+    margin: 0; padding: 0;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--txt);
+    font-family: 'Open Sans', sans-serif;
+}
+
+.app-content {
+    display: flex; flex-flow: column nowrap;
+    min-height: 100vh;
+}
+
+.app-header, 
+.app-body, 
+.app-footer {
+    flex-grow: 0;
+    padding: 1rem;
+}
+
+.app-body {
+    flex-grow: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'PT Sans Narrow', sans-serif;
+    font-weight: normal;
+    color: var(--bg-dark);
+}
+
+a {
+    text-decoration: underline;
+    color: var(--hlt);
+}
+a:hover, a:focus {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+::selection {
+    background-color: var(--hlt);
+    color: var(--bg);
+}
+
+/* app header */
+.app-header {
+    text-align: center;
+    border-bottom: 1px solid var(--lt-border);
+}
+.app-title {
+    display: inline-block;
+    text-align: center;
+    font-size: 1rem;
+    margin: 0; padding-right: .125em;
+    transform: translateY(-.5em);
+    position: relative;
+    animation: raise .5s ease-out backwards 0s;
+}
+.app-title::after {
+    content: '';
+    position: absolute; display: block;
+    top: calc(100% - .66em + 2px); left: 0; right: 0; height: .66rem;
+    border-radius: 2px;
+    background: linear-gradient(to bottom, transparent, var(--hlt2-tp) 50%, var(--hlt2-tp));
+    border: 2px solid var(--hlt);
+    border-top: none;
+}
+.app-title > .content { position: relative; z-index: 1; }
+.app-title .lib-title {
+    font-size: 2em;
+    display: inline-block; position: relative;
+    overflow: hidden; border-radius: 2px; padding: 0 .125em;
+    animation: levitate .5s ease backwards .5s;
+}
+.app-title .lib-title::before {
+    content: '';
+    display: block; position: absolute;
+    top: 0; right: 100%; height: 100%; width: 100%;
+    background: linear-gradient(to right, transparent, #FFF5, transparent);
+    animation: glimmer 6s ease 1s infinite;
+}
+
+.lib-title {
+    font-family: 'Poiret One', cursive;
+    font-size: 1.5em;
+    font-style: normal;
+    font-weight: bold;
+    background-image: linear-gradient(to right, var(--hlt2), var(--hlt), var(--hlt2), var(--hlt), var(--hlt2));
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* app body */
+.app-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1);
+    grid-template-areas: "playground . .";
+}
+.app-body > section.playground {
+    grid-area: playground;
+    border: 1px solid var(--lt-border);
+    padding: .5rem;
+}
+.app-body > section.playground h2 {
+    margin: 0; margin-bottom: .5rem;
+}
+.app-body > section.playground > textarea {
+    height: 7rem; width: 100%;
+    box-sizing: border-box; resize: vertical;
+    background: var(--hlt-tp);
+    border: 1px solid var(--lt-border); border-radius: 2px;
+}
+
+/* app footer */
+.app-footer {
+    background-color: var(--bg-dark);
+    color: var(--txt-lt);
+    display: flex;
+}
+
+.app-footer a:hover,
+.app-footer a:focus {
+    color: var(--bg);
+}
+
+.app-footer .links {
+    flex-grow: 1;
+    margin-right: 1rem;
+}
+.app-footer > .links > ul {
+    list-style: none;
+    margin: 0; padding: 0;
+}
+
+.app-footer > .links > ul .fa {
+    font-size: 2rem;
+}
+
+
+@keyframes levitate {
+    from {
+        transform: scale(.66) translateY(.5em);
+    }
+}
+
+@keyframes raise {
+    from {
+        transform: translateY(.125em);
+        opacity: 0;
+    }
+}
+
+@keyframes glimmer {
+    from {
+        transform: translate(0%);
+    } 20% {
+        transform: translate(200%);
+    } 20.000001% {
+        transform: translate(0%);
+    }
+}
