@@ -1,11 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-const eardrum = require('../../dist/eardrum.js');
+var eardrum = require('../../dist/eardrum.js');
 
 describe('configure method helper', () => {
 	afterEach(() => {
 		eardrum.reset();
+		jest.resetAllMocks();
 	});
 
 	it('GIVEN property does not exist on object THEN should add property to object', () => {
