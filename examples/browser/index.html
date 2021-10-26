@@ -27,13 +27,28 @@
 				<article>
 				</article>
 			</section>
-			<nav class="handles">
+			<section class="api">
+				<h2>API</h2>
 				<article>
 					<button class="fancy-btn" id="configureObjectBtn">
 						configureObject()
 					</button>
 					<p>Create a new butterfly and use it in <code>eardrum.configure</code> method</p>
-					<pre class="code">var myObject = {};
+					<div>
+						<header class="code-header">
+							<h4>Code:</h4>
+							<button onclick="(function toggle (btn) {
+								var code = document.getElementById('configureObjectCode');
+								if (!code) return;
+								var isOpen = code.dataset.state === 'OPEN';
+								btn.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+								code.style.transform = isOpen ? 'scaleY(0)' : 'scaleY(1)';
+								code.setAttribute('data-state', isOpen ? 'CLOSED' : 'OPEN');
+							})(this)">
+								<i class="fa fa-chevron-down"></i>
+							</button>
+						</header>
+						<pre class="code" id="configureObjectCode" style="transform: scaleY(0);" data-state="CLOSED">var myObject = {};
 var newButterfly = createButterfly();
 
 <strong>eardrum.configure(</strong>{
@@ -50,9 +65,10 @@ var newButterfly = createButterfly();
     butterfly: newButterfly
   }
 }<strong>)</strong>;
-					</pre>
+						</pre>
+					</div>
 				</article>
-			</nav>
+			</section>
 		</main>
 		<footer class="app-footer">
 			<nav class="links">

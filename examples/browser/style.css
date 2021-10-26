@@ -47,6 +47,10 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'PT Sans Narrow', sans-serif;
     font-weight: normal;
     color: var(--bg-dark);
+    margin: 0; margin-bottom: .5rem;
+}
+h4, h5, h6 {
+    text-decoration: underline;
 }
 
 a {
@@ -56,6 +60,7 @@ a {
 a:hover, a:focus {
     text-decoration: none;
     cursor: pointer;
+    outline: none;
 }
 
 code {
@@ -66,8 +71,39 @@ code {
 pre.code {
     font-family: monospace;
     font-weight: normal;
-    background: var(--hlt-tp-tp);
+    background: var(--hlt-tp-tp); border-radius: 2px;
     padding: .5em; font-size: .875rem;
+    overflow: hidden;
+    transform-origin: top;
+    -webkit-transition: all .5s cubic-bezier(0, 0.99, 0.54, 1);
+    transition: all .5s cubic-bezier(0, 0.99, 0.54, 1);
+}
+pre.code[data-state="OPEN"] {
+    -webkit-transition: .2s ease-out;
+    transition: .2s ease-out;
+}
+
+.code-header {
+    display: flex; align-items: center;
+}
+.code-header > * { margin-bottom: 0; }
+.code-header > button {
+    background-color: transparent;
+    border-radius: 99px; border: none;
+    width: 2em; height: 2em; margin-left: .5rem;
+    font-size: 1rem; cursor: pointer;
+    transition: transform .2s ease-out;
+}
+.code-header > button:hover {
+    background-color: var(--hlt-tp-tp);
+}
+.code-header > button:focus {
+    background-color: var(--hlt-tp);
+    outline: none;
+}
+.code-header > button:active {
+    background-color: var(--hlt);
+    color: var(--bg);
 }
 
 .fancy-btn {
@@ -87,6 +123,10 @@ pre.code {
     color: var(--white);
     box-shadow: 0 0 0 .333em var(--hlt2-tp-tp);
     transition-duration: .2s;
+}
+
+.toggle-btn {
+    transition: transform .2s ease;
 }
 
 ::selection {
@@ -121,7 +161,7 @@ pre.code {
     display: inline-block;
     text-align: center;
     font-size: 1rem;
-    margin: 0; padding-right: .125em;
+    margin: 0; padding-right: .25em;
     transform: translateY(-.5em);
     position: relative;
     animation: raise .5s ease-out backwards 0s;
@@ -166,7 +206,7 @@ pre.code {
 .app-body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-areas: "playground handles handles";
+    grid-template-areas: "playground api api";
     padding: 0;
 }
 .app-body > * {
@@ -205,10 +245,10 @@ pre.code {
     ;
 }
 
-.app-body > nav.handles {
-    grid-area: handles;
+.app-body > section.api {
+    grid-area: api;
 }
-.app-body > nav.handles .fancy-btn {
+.app-body > section.api .fancy-btn {
     font-size: 1.333rem;
 }
 
