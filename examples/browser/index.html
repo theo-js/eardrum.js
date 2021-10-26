@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="https://use.fontawesome.com/4d654ed345.js"></script>
 	<link rel="stylesheet" href="/style.css">
-    <title>eardrum.js Browser Example</title>
+    <title>eardrum.js Live Example (Browser)</title>
 </head>
 <body>
 	<div class="app-content">
@@ -15,7 +15,7 @@
 				<span class="content">
 					<span class="lib-title">eardrum.js</span> 
 					<span style="white-space: nowrap;">
-						Browser Example
+						live example
 					</span>
 				</span>
 			</h1>
@@ -24,7 +24,35 @@
 			<section class="playground">
 				<h2>Playground</h2>
 				<textarea></textarea>
+				<article>
+				</article>
 			</section>
+			<nav class="handles">
+				<article>
+					<button class="fancy-btn" id="configureObjectBtn">
+						configureObject()
+					</button>
+					<p>Create a new butterfly and use it in <code>eardrum.configure</code> method</p>
+					<pre class="code">var myObject = {};
+var newButterfly = createButterfly();
+
+<strong>eardrum.configure(</strong>{
+  object: myObject,
+  property: 'property',
+  handler: function (mouseEvent, config) {
+    moveButterfly(mouseEvent, newButterfly);
+  },
+  listener: {
+    target: window,
+  type: 'mousemove'
+  },
+  additionalRefProperties: {
+    butterfly: newButterfly
+  }
+}<strong>)</strong>;
+					</pre>
+				</article>
+			</nav>
 		</main>
 		<footer class="app-footer">
 			<nav class="links">
@@ -48,6 +76,7 @@
 			</address>
 		</footer>
 	</div>
+	<div id="butterflies"></div>
     <script type="text/javascript" src="/eardrum/eardrum.js"></script>
     <script type="text/javascript" src="/index.js"></script>
 </body>

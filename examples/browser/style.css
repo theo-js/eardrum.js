@@ -2,15 +2,19 @@
 
 :root {
     font-size: 17px;
-    --bg: rgb(242, 244, 252);
+    --white: white;
+    --bg: #f7f8fd;
     --bg-dark: rgb(0, 64, 80);
-    --txt: rgb(77, 77, 77);
+    --bg-dark2: rgb(79, 80, 0);
+    --txt: #394346e6;
     --txt-lt: var(--bg);
-    --lt-border: rgba(167, 179, 192, 0.466);
+    --lt-border: rgba(167, 179, 192, 0.5);
     --hlt: rgb(0, 136, 170);
-    --hlt-tp: #0068aa40;
+    --hlt-tp: rgba(0, 104, 170, 0.25);
+    --hlt-tp-tp: rgba(0, 104, 170, 0.125);
     --hlt2: rgb(185, 182, 0);
     --hlt2-tp: rgba(167, 170, 0, .25);
+    --hlt2-tp-tp: rgba(167, 170, 0, .125);
 }
 
 html, body {
@@ -54,15 +58,64 @@ a:hover, a:focus {
     cursor: pointer;
 }
 
+code {
+    font-weight: bold;
+    background: var(--hlt-tp-tp);
+    border-radius: .25em; padding: 0 .25rem;
+}
+pre.code {
+    font-family: monospace;
+    font-weight: normal;
+    background: var(--hlt-tp-tp);
+    padding: .5em; font-size: .875rem;
+}
+
+.fancy-btn {
+    padding: .25rem .333em;
+    border-radius: .25em;
+    background-color: var(--hlt2-tp-tp);
+    color: var(--hlt2);
+    border: none; box-shadow: 0 0 0 .165em var(--hlt2-tp);
+    font-weight: bold;
+    transition: 1s ease;
+    cursor: pointer;
+}
+.fancy-btn:hover,
+.fancy-btn:focus {
+    outline: none;
+    background-color: var(--hlt2-tp);
+    color: var(--white);
+    box-shadow: 0 0 0 .333em var(--hlt2-tp-tp);
+    transition-duration: .2s;
+}
+
 ::selection {
     background-color: var(--hlt);
     color: var(--bg);
 }
 
+/* butterflies */
+#butterflies {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0; height: 100%; width: 100%;
+    filter: drop-shadow(0 4px 1px #0005);
+}
+.butterfly {
+    display: flex; justify-content: center;
+    position: absolute; top: 0; left: 0;
+    font-size: 30px; border-radius: 50%;
+    animation: fade 1s ease;
+}
+.butterfly .fa {
+    display: inline-block; margin-top: -.5em;
+}
+
 /* app header */
 .app-header {
-    text-align: center;
+    text-align: left;
     border-bottom: 1px solid var(--lt-border);
+    background-color: var(--white);
 }
 .app-title {
     display: inline-block;
@@ -93,8 +146,8 @@ a:hover, a:focus {
     content: '';
     display: block; position: absolute;
     top: 0; right: 100%; height: 100%; width: 100%;
-    background: linear-gradient(to right, transparent, #FFF5, transparent);
-    animation: glimmer 6s ease 1s infinite;
+    background: linear-gradient(to right, transparent, #FFF7, transparent);
+    animation: glimmer 3s ease 1s infinite;
 }
 
 .lib-title {
@@ -112,29 +165,60 @@ a:hover, a:focus {
 /* app body */
 .app-body {
     display: grid;
-    grid-template-columns: repeat(3, 1);
-    grid-template-areas: "playground . .";
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas: "playground handles handles";
+    padding: 0;
+}
+.app-body > * {
+    padding: 1rem;
 }
 .app-body > section.playground {
     grid-area: playground;
-    border: 1px solid var(--lt-border);
-    padding: .5rem;
+    border-right: 1px solid var(--lt-border);
 }
 .app-body > section.playground h2 {
     margin: 0; margin-bottom: .5rem;
 }
 .app-body > section.playground > textarea {
-    height: 7rem; width: 100%;
+    min-height: 2rem; height: 10rem; width: 100%;
     box-sizing: border-box; resize: vertical;
-    background: var(--hlt-tp);
-    border: 1px solid var(--lt-border); border-radius: 2px;
+}
+.app-body > section.playground > textarea,
+.app-body > section.playground > input {
+    padding: .5rem;
+    background: linear-gradient(to top, var(--hlt-tp-tp), var(--bg));
+    border: 1px solid var(--hlt); border-radius: 2px;
+    transition: .3s ease, height 0s;
+}
+.app-body > section.playground > textarea:hover,
+.app-body > section.playground > input:hover {
+    border-color: var(--bg-dark);
+}
+.app-body > section.playground > textarea:focus,
+.app-body > section.playground > input:focus {
+    outline: none;
+    border-color: var(--bg-dark);
+    box-shadow:
+        0 0 .5rem 0 var(--hlt-tp-tp),
+        0 0 1rem 0 var(--hlt-tp-tp),
+        0 0 2rem 0 var(--hlt-tp-tp)
+    ;
+}
+
+.app-body > nav.handles {
+    grid-area: handles;
+}
+.app-body > nav.handles .fancy-btn {
+    font-size: 1.333rem;
 }
 
 /* app footer */
 .app-footer {
+    position: sticky; bottom: 0;
     background-color: var(--bg-dark);
     color: var(--txt-lt);
     display: flex;
+    padding: .5rem 1rem;
 }
 
 .app-footer a:hover,
@@ -152,7 +236,7 @@ a:hover, a:focus {
 }
 
 .app-footer > .links > ul .fa {
-    font-size: 2rem;
+    font-size: 2.5rem;
 }
 
 
@@ -172,9 +256,17 @@ a:hover, a:focus {
 @keyframes glimmer {
     from {
         transform: translate(0%);
-    } 20% {
+    } 40% {
         transform: translate(200%);
-    } 20.000001% {
+    } 40.000001% {
         transform: translate(0%);
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    } to {
+        opacity: 1;
     }
 }
