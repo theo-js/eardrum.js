@@ -354,6 +354,13 @@ pre.code[data-state="OPEN"] {
 }
 
 
+@media screen and (max-width: 600px) {
+    .app-body {
+        grid-template-areas: "api api api" "playground playground playground";
+    }
+}
+
+
 @keyframes levitate {
     from {
         transform: scale(.66) translateY(.5em);
