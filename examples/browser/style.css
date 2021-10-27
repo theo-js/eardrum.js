@@ -354,9 +354,13 @@ pre.code[data-state="OPEN"] {
 }
 
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 705px) {
     .app-body {
         grid-template-areas: "api api api" "playground playground playground";
+        max-height: unset;
+    }
+    .app-body > * {
+        max-height: unset;
     }
 }
 
