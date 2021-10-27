@@ -1,7 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=PT+Sans+Narrow&family=Poiret+One&display=swap');
 
 :root {
+    /* Font */
     font-size: 17px;
+
+    /* Color */
     --white: white;
     --bg: #f7f8fd;
     --bg-dark: rgb(0, 64, 80);
@@ -15,6 +18,13 @@
     --hlt2: rgb(185, 182, 0);
     --hlt2-tp: rgba(167, 170, 0, .25);
     --hlt2-tp-tp: rgba(167, 170, 0, .125);
+    --important: #eedb7245;
+    --danger: #ee728645;
+    --danger-opaque: #ee7286;
+
+    /* Size */
+    --app-body-max-height: calc(100vh - 80px - 59px);
+    --app-body-section-max-height: 404px;
 }
 
 html, body {
@@ -45,7 +55,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'PT Sans Narrow', sans-serif;
-    font-weight: normal;
+    font-weight: normal; letter-spacing: 2px;
     color: var(--bg-dark);
     margin: 0; margin-bottom: .5rem;
 }
@@ -75,6 +85,7 @@ pre.code {
     padding: .5em; font-size: .875rem;
     overflow: hidden;
     transform-origin: top;
+    max-height: 0;
     -webkit-transition: all .5s cubic-bezier(0, 0.99, 0.54, 1);
     transition: all .5s cubic-bezier(0, 0.99, 0.54, 1);
 }
@@ -126,12 +137,43 @@ pre.code[data-state="OPEN"] {
 }
 
 .toggle-btn {
+    cursor: pointer;
     transition: transform .2s ease;
 }
+
+.alert {
+    margin: .5rem 0; padding: .5em;
+    border-left: 4px solid var(--lt-border); border-radius: 0 .25em .25em 0;
+}
+.alert-warning {
+    background-color: var(--important);
+    color: var(--bg-dark);
+    border-left-color: var(--hlt2);
+}
+.alert-danger {
+    background-color: var(--danger);
+    color: var(--bg-dark);
+    border-left-color: var(--danger-opaque);
+}
+
 
 ::selection {
     background-color: var(--hlt);
     color: var(--bg);
+}
+
+::-webkit-scrollbar {
+    background-color: var(--bg);
+    width: .25rem; height: .25rem;
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--hlt);
+}
+::-webkit-scrollbar-thumb:active {
+    background-color: var(--hlt-tp);
 }
 
 /* butterflies */
@@ -160,7 +202,7 @@ pre.code[data-state="OPEN"] {
 .app-title {
     display: inline-block;
     text-align: center;
-    font-size: 1rem;
+    font-size: 1rem; letter-spacing: initial !important;
     margin: 0; padding-right: .25em;
     transform: translateY(-.5em);
     position: relative;
@@ -208,34 +250,49 @@ pre.code[data-state="OPEN"] {
     grid-template-columns: repeat(3, 1fr);
     grid-template-areas: "playground api api";
     padding: 0;
+    max-height: var(--app-body-max-height);
 }
 .app-body > * {
     padding: 1rem;
+    max-height: var(--app-body-section-max-height);
+    overflow: auto;
 }
 .app-body > section.playground {
     grid-area: playground;
+    position: sticky; top: 0;
     border-right: 1px solid var(--lt-border);
 }
 .app-body > section.playground h2 {
     margin: 0; margin-bottom: .5rem;
 }
-.app-body > section.playground > textarea {
-    min-height: 2rem; height: 10rem; width: 100%;
+.app-body > section.playground fieldset {
+    padding: 0; padding-bottom: .33rem;
+    margin: 0; margin-bottom: .5rem;
+    border: none; border-bottom: 1px solid var(--lt-border);
+}
+.app-body > section.playground label {
+    display: inline-block;
+    background-color: var(--hlt2-tp-tp);
+    padding: 0 .25rem; margin-bottom: .5rem;
+    border-radius: .25rem;
+}
+.app-body > section.playground textarea {
+    min-height: 2rem; height: 5rem;
     box-sizing: border-box; resize: vertical;
 }
-.app-body > section.playground > textarea,
-.app-body > section.playground > input {
-    padding: .5rem;
+.app-body > section.playground textarea,
+.app-body > section.playground input {
+    padding: .5rem;  width: 100%;
     background: linear-gradient(to top, var(--hlt-tp-tp), var(--bg));
     border: 1px solid var(--hlt); border-radius: 2px;
     transition: .3s ease, height 0s;
 }
-.app-body > section.playground > textarea:hover,
-.app-body > section.playground > input:hover {
+.app-body > section.playground textarea:hover,
+.app-body > section.playground input:hover {
     border-color: var(--bg-dark);
 }
-.app-body > section.playground > textarea:focus,
-.app-body > section.playground > input:focus {
+.app-body > section.playground textarea:focus,
+.app-body > section.playground input:focus {
     outline: none;
     border-color: var(--bg-dark);
     box-shadow:
@@ -243,6 +300,23 @@ pre.code[data-state="OPEN"] {
         0 0 1rem 0 var(--hlt-tp-tp),
         0 0 2rem 0 var(--hlt-tp-tp)
     ;
+}
+.app-body > section.playground textarea.error,
+.app-body > section.playground input.error {
+    background: linear-gradient(to top, var(--danger), var(--bg));
+}
+.app-body > section.playground .alert {
+    position: relative;
+    font-size: .75em;
+    word-break: break-all;
+}
+.app-body > section.playground .alert .toggle-btn {
+    position: absolute; top: -.333em; right: -.333em;
+}
+
+.app-body > section.playground fieldset.output {
+    position: sticky; bottom: -1rem; margin: 0; padding: .5rem 0;
+    background-color: var(--bg); color: var(--bg-dark2);
 }
 
 .app-body > section.api {

@@ -6,7 +6,6 @@ function getRandomCol () {
     return 'rgb(' + getRandomInt(50, 205) + ',' + getRandomInt(50, 205) + ',' + getRandomInt(50, 205) + ')';
 }
 /**
- * 
  * @param {string} rgb color in rgb format
  * @returns {string} same color, transparent, in rgba format
  */
@@ -37,7 +36,7 @@ var createButterfly = function (clickEvent) {
     element.style.width = width + 'px';
     element.style.fontSize = fontSize + 'px';
     element.style.color = color;
-    //element.style.border = '1px solid ' + transparentize(color);
+    element.style.border = '1px solid ' + transparentize(color);
 
     var icon = document.createElement('i');
     icon.className = 'fa fa-bug';
@@ -80,7 +79,17 @@ var moveButterfly = function (mouseEvent, butterfly) {
 
 
 // Create configurable object
-var myObject = {};
+var object = {};
+// eardrum.configure parameters
+var property = 'MY_PROPERTY';
+var value;
+var handler;
+var listener = {
+    target: window,
+    type: 'mousemove'
+};
+var additionalRefProperties;
+var listenerRemovalCondition;
 
 /*
 ======================================
@@ -91,19 +100,19 @@ function configureObject (clickEvent) {
     var newButterfly = createButterfly(clickEvent);
 
     eardrum.configure({
-        object: myObject,
-        property: 'property',
-        handler: function (mouseEvent, config) {
+        object: object,
+        property: property,
+        handler: typeof handler !== 'undefined' ? handler : function (mouseEvent, config) {
             moveButterfly(mouseEvent, newButterfly);
         },
-        listener: {
-            target: window,
-            type: 'mousemove'
-        },
-        additionalRefProperties: {
+        listener: listener,
+        additionalRefProperties: typeof additionalRefProperties !== 'undefined' ? additionalRefProperties : {
             butterfly: newButterfly
-        }
+        },
+        listenerRemovalCondition: listenerRemovalCondition
     });
+
+    refreshOutput();
 }
 
 
@@ -113,3 +122,7 @@ function configureObject (clickEvent) {
 // DOM
 var configureObjectBtn = document.getElementById('configureObjectBtn');
 configureObjectBtn.onclick = configureObject;
+var objectOutput = document.getElementById('objectOutput');
+function refreshOutput () {
+    objectOutput.textContent = JSON.stringify(object);
+}

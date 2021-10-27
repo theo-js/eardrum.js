@@ -23,9 +23,82 @@
 		<main class="app-body">
 			<section class="playground">
 				<h2>Playground</h2>
-				<textarea></textarea>
-				<article>
-				</article>
+				<p>
+					You can modify the parameters of <code>eardrum.configure</code> calls here.
+				</p>
+				<p class="alert alert-warning" style="margin-bottom: 1rem; padding-bottom: .5rem;">
+					<strong style="text-decoration: underline;">Warning:</strong> 
+					do not paste any code that you don't understand 
+				</p>
+				<fieldset>
+					<label for="objectHandle">var <strong>object</strong> = </label>
+					<textarea
+						name="objectHandle"
+						id="objectHandle"
+						data-var="object"
+					>{}</textarea>
+				</fieldset>
+				<fieldset>
+					<label for="propertyHandle">var <strong>property</strong> = </label>
+					<textarea
+						name="propertyHandle"
+						id="propertyHandle"
+						data-var="property"
+					>'MY_PROPERTY'</textarea>
+				</fieldset>
+				<fieldset>
+					<label for="valueHandle">var <strong>value</strong> = </label>
+					<textarea
+						name="valueHandle"
+						id="valueHandle"
+						data-var="value"
+					>undefined</textarea>
+				</fieldset>
+				<fieldset>
+					<label for="handlerHandle">var <strong>handler</strong> = </label>
+					<textarea
+						name="handlerHandle"
+						id="handlerHandle"
+						data-var="handler"
+					>function (mouseEvent, config) {
+	moveButterfly(mouseEvent, newButterfly);
+}</textarea>
+				</fieldset>
+				<fieldset>
+					<label for="listenerHandle">var <strong>listener</strong> = </label>
+					<textarea
+						name="listenerHandle"
+						id="listenerHandle"
+						data-var="listener"
+					>{
+	target: window,
+	type: 'mousemove'
+}</textarea>
+				</fieldset>
+				<fieldset>
+					<label for="listenerRemovalConditionHandle">var <strong>listenerRemovalCondition</strong> = </label>
+					<textarea
+						name="listenerRemovalConditionHandle"
+						id="listenerRemovalConditionHandle"
+						data-var="listenerRemovalCondition"
+					>undefined</textarea>
+				</fieldset>
+				<fieldset>
+					<label for="additionalRefPropsHandle">var <strong>additionalRefProps</strong> = </label>
+					<textarea
+						name="additionalRefPropsHandle"
+						id="additionalRefPropsHandle"
+						data-var="additionalRefProperties"
+					>
+{
+	butterfly: newButterfly
+}</textarea>
+				</fieldset>
+				<fieldset class="output">
+					<h3 style="border-bottom: 1px solid var(--bg-dark);">Output (JSON)</h3>
+					<strong>object</strong> ==>
+					<output id="objectOutput" name="objectOutput">{}</output>
+				</fieldset>
 			</section>
 			<section class="api">
 				<h2>API</h2>
@@ -36,13 +109,14 @@
 					<p>Create a new butterfly and use it in <code>eardrum.configure</code> method</p>
 					<div>
 						<header class="code-header">
-							<h4>Code:</h4>
+							<h4><i class="fa fa-code"></i> Code:</h4>
 							<button onclick="(function toggle (btn) {
 								var code = document.getElementById('configureObjectCode');
 								if (!code) return;
 								var isOpen = code.dataset.state === 'OPEN';
 								btn.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
 								code.style.transform = isOpen ? 'scaleY(0)' : 'scaleY(1)';
+								code.style.maxHeight = isOpen ? '0px' : '9999px';
 								code.setAttribute('data-state', isOpen ? 'CLOSED' : 'OPEN');
 							})(this)">
 								<i class="fa fa-chevron-down"></i>
@@ -94,6 +168,8 @@ var newButterfly = createButterfly();
 	</div>
 	<div id="butterflies"></div>
     <script type="text/javascript" src="/eardrum/eardrum.js"></script>
-    <script type="text/javascript" src="/index.js"></script>
+	<script type="text/javascript" src="./printObject.js"></script>
+    <script type="text/javascript" src="/app.js"></script>
+	<script type="text/javascript" src="/playground.js"></script>
 </body>
 </html>
