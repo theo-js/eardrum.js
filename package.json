@@ -1,5 +1,5 @@
 {
-  "name": "eardrum.js",
+  "name": "eardrum",
   "version": "1.0.0",
   "description": "A Javascript library that binds event listeners to object properties",
   "main": "dist/eardrum.js",
