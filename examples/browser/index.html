@@ -25,7 +25,7 @@
 			<section class="playground">
 				<h2>Playground</h2>
 				<p>
-					You can modify the parameters of <code>eardrum.configure</code> calls here.
+					You can modify the parameters of <code>eardrum.watch</code> calls here.
 				</p>
 				<p class="alert alert-warning" style="margin-bottom: 1rem; padding-bottom: .5rem;">
 					<strong style="text-decoration: underline;">Warning:</strong> 
@@ -107,7 +107,7 @@
 					<button class="fancy-btn" id="configureObjectBtn">
 						configureObject()
 					</button>
-					<p>Create a new butterfly and use it in <code>eardrum.configure</code> method</p>
+					<p>Create a new butterfly and use it in <code>eardrum.watch</code> method</p>
 					<div>
 						<header class="code-header">
 							<h4><i class="fa fa-code"></i> Code:</h4>
@@ -126,7 +126,7 @@
 						<pre class="code" id="configureObjectCode" style="transform: scaleY(0);" data-state="CLOSED">var myObject = {};
 var newButterfly = createButterfly();
 
-<strong>eardrum.configure(</strong>{
+<strong>eardrum.watch(</strong>{
   object: myObject,
   property: 'property',
   handler: function (mouseEvent, config) {

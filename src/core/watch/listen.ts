@@ -2,7 +2,7 @@ import Eardrum from '../Eardrum';
 import EardrumRef from '../Ref';
 import { isEardrumSupportedObject, isEventTargetOrEmitter, isNodeEnv } from '../utils';
 
-interface ListenWithCleanupOptions extends EardrumConfigureArgs {
+interface ListenWithCleanupOptions extends EardrumWatchArgs {
   attachMethodName: string;
   detachMethodName: string;
   attach: boolean;
@@ -16,7 +16,7 @@ interface ListenWithCleanupOptions extends EardrumConfigureArgs {
 /**
  * Store references of added handlers in an Array and remove from that
  *
- * @param {object} options EardrumConfigureArgs with additional parameters
+ * @param {object} options EardrumWatchArgs with additional parameters
  */
 function listenWithCleanup(this: Eardrum, {
   attach,
@@ -84,15 +84,15 @@ function listenWithCleanup(this: Eardrum, {
  * Calls listenWithCleanup with appropriate parameters
  *
  * @param {boolean} attach Whether the listener needs to be added (true) or removed (false)
- * @param {object} eardrumConfigureArgs Parameters of the configure method
+ * @param {object} eardrumWatchArgs Parameters of the watch method
  */
 function toggleListener(
   this: Eardrum,
   attach: boolean,
-  eardrumConfigureArgs: EardrumConfigureArgs
+  eardrumWatchArgs: EardrumWatchArgs
 ): void|never {
   // Typescript narrowing
-  const { handler, listener, additionalRefProps } = eardrumConfigureArgs;
+  const { handler, listener, additionalRefProps } = eardrumWatchArgs;
   const narrowedAdditionalRefProps = additionalRefProps as { [index: PropertyKey]: any };
   const narrowedListener = listener as {
     type?: string;
@@ -115,7 +115,7 @@ function toggleListener(
     attachMethodName = 'addListener';
     detachMethodName = 'removeListener';
     handlerWrapper = function (e: Event) {
-      narrowedHandler(e, eardrumConfigureArgs);
+      narrowedHandler(e, eardrumWatchArgs);
     };
   } else if (typeof window !== 'undefined') {
     // For browsers attach listener on window by default
@@ -125,14 +125,14 @@ function toggleListener(
     attachMethodName = 'addEventListener';
     detachMethodName = 'removeEventListener';
     handlerWrapper = function (e: Event) {
-      narrowedHandler(e, eardrumConfigureArgs);
+      narrowedHandler(e, eardrumWatchArgs);
     };
   } else {
     throw new Error('This environment does not support eardrum.js');
   }
 
   (listenWithCleanup.bind(this, {
-    ...eardrumConfigureArgs,
+    ...eardrumWatchArgs,
     handler: handlerWrapper,
     listener: {
       ...narrowedListener,
@@ -148,16 +148,16 @@ function toggleListener(
 
 /**
  * Call toggleListener with attach = true
- * @param {object} eardrumConfigureArgs Parameters of the eardrum configure method
+ * @param {object} eardrumWatchArgs Parameters of the eardrum watch method
  */
-export function installListener(this: Eardrum, eardrumConfigureArgs: EardrumConfigureArgs) {
-  (toggleListener.bind(this, true, eardrumConfigureArgs))();
+export function installListener(this: Eardrum, eardrumWatchArgs: EardrumWatchArgs) {
+  (toggleListener.bind(this, true, eardrumWatchArgs))();
 }
 
 /**
  * Call toggleListener with attach = false
- * @param {object} eardrumConfigureArgs Parameters of the eardrum configure method
+ * @param {object} eardrumWatchArgs Parameters of the eardrum watch method
  */
-export function ejectListener(this: Eardrum, eardrumConfigureArgs: EardrumConfigureArgs) {
-  (toggleListener.bind(this, false, eardrumConfigureArgs))();
+export function ejectListener(this: Eardrum, eardrumWatchArgs: EardrumWatchArgs) {
+  (toggleListener.bind(this, false, eardrumWatchArgs))();
 }

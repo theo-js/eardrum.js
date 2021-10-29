@@ -1,6 +1,6 @@
 import { isEardrumSupportedObject, throwIfPropIsNotConfigurable, isFunction } from "../utils";
 
-export default function (eardrumConfigureArgs: EardrumConfigureArgs): EardrumConfigureArgs|never {
+export default function (eardrumWatchArgs: EardrumWatchArgs): EardrumWatchArgs|never {
     let {
         object,
         property,
@@ -11,14 +11,14 @@ export default function (eardrumConfigureArgs: EardrumConfigureArgs): EardrumCon
             target: undefined,
             options: undefined
         }
-    } = eardrumConfigureArgs;
+    } = eardrumWatchArgs;
     // Validate object
     if (!isEardrumSupportedObject(object)) throw new Error('Eardrum does not support this object');
 
     // Validate property
     /*const descriptor = */throwIfPropIsNotConfigurable(
         { object, key: property },
-        `Eardrum cannot configure property ${property.toString()} of provided object because it is not configurable`
+        `Eardrum cannot watch property ${property.toString()} of provided object because it is not configurable`
     );
 
     // Validate event handler
@@ -27,12 +27,12 @@ export default function (eardrumConfigureArgs: EardrumConfigureArgs): EardrumCon
         // => should default to provided property value (if is function)
         if (isFunction(object[property])) {
             handler = object[property];
-            eardrumConfigureArgs.handler = handler;
+            eardrumWatchArgs.handler = handler;
         }
     } 
 
     return {
-        ...eardrumConfigureArgs,
+        ...eardrumWatchArgs,
         object,
         property,
         handler,

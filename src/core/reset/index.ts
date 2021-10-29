@@ -15,7 +15,7 @@ export default function reset (this: Eardrum): boolean {
 		// Reset stored values
 		try {
 			emptyArray(this.refs);
-			this.lastConfiguredObject.current = null;
+			this.lastWatched.current = null;
 		} catch (err) {
 			return false;
 		}

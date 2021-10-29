@@ -10,7 +10,7 @@ describe('reset method helper', () => {
 		const object = {};
 		const calls = 10;
 		for (let i = 0; i < calls; i++) {
-			eardrum.configure({
+			eardrum.watch({
 				object,
 				property: 'PROP',
 				handler: jest.fn(),
@@ -18,11 +18,11 @@ describe('reset method helper', () => {
 			});
 		}
 		expect(eardrum.refs.length).toBe(calls);
-		expect(eardrum.lastConfiguredObject.current === object).toBe(true);
+		expect(eardrum.lastWatched.current === object).toBe(true);
 		
 		eardrum.reset();
 		expect(eardrum.refs.length).toBe(0);
-		expect(eardrum.lastConfiguredObject.current === null).toBe(true);
+		expect(eardrum.lastWatched.current === null).toBe(true);
 	});
 
 	it('should return true if ref was successfully ejected, false otherwise', () => {

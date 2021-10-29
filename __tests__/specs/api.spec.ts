@@ -5,7 +5,7 @@ var eardrum = require('../../dist/eardrum.js');
 
 describe('static api', () => {
 	it('should have object configuration method helpers', () => {
-		expect(typeof eardrum.configure).toEqual('function');
+		expect(typeof eardrum.watch).toEqual('function');
 		expect(typeof eardrum.reset).toEqual('function');
 	});
 
@@ -20,6 +20,6 @@ describe('static api', () => {
 
 	it('stored values should be initialized correctly', () => {
 		expect(eardrum.refs).toEqual([]);
-		expect(eardrum.lastConfiguredObject).toEqual({ current: null });
+		expect(eardrum.lastWatched).toEqual({ current: null });
 	});
 });

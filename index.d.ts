@@ -1,7 +1,7 @@
 /**
- * Parameters of the eardrum.configure method
+ * Parameters of the eardrum.watch method
  */
-interface EardrumConfigureArgs {
+interface EardrumWatchArgs {
     object: EardrumSupportedObject;
     property: EardrumSupportedPropertyKey;
     value?: unknown;
@@ -29,7 +29,7 @@ type EardrumTarget = EventTarget | import('events').EventEmitter;
 
 type EardrumSupportedPropertyKey = Exclude<PropertyKey, number>;
 
-type EardrumEventHandler = (e: Event, args: EardrumConfigureArgs) => unknown
+type EardrumEventHandler = (e: Event, args: EardrumWatchArgs) => unknown
     
 interface EventHandlerReference {
     /**

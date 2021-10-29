@@ -1,30 +1,30 @@
 import Eardrum from '../Eardrum';
-import validateEardrumConfigureArgs from './validateEardrumConfigureArgs';
+import validateEardrumWatchArgs from './validateEardrumWatchArgs';
 import { installListener, ejectListener } from './listen';
 import { isFunction, createPrivatePropName } from '../utils';
 
 /**
- * Configure object property to automatically manage event listeners 
+ * Configure object property to automatically manage event listeners in setter function
  *
- * @param {object} eardrumConfigureArgs Options object
+ * @param {object} eardrumWatchArgs Options object
  */
-export default function configure (this: Eardrum, eardrumConfigureArgs: EardrumConfigureArgs): void {
+export default function watch (this: Eardrum, eardrumWatchArgs: EardrumWatchArgs): void {
   // Validation
-  const eardrumConfigureArgsValidated = validateEardrumConfigureArgs(eardrumConfigureArgs);
+  const eardrumWatchArgsValidated = validateEardrumWatchArgs(eardrumWatchArgs);
   const {
     object,
     property,
     value,
     handler
-  } = eardrumConfigureArgsValidated;
+  } = eardrumWatchArgsValidated;
 
   // Bind context
-  const install = installListener.bind(this, eardrumConfigureArgsValidated);
-  const eject = ejectListener.bind(this, eardrumConfigureArgsValidated);
+  const install = installListener.bind(this, eardrumWatchArgsValidated);
+  const eject = ejectListener.bind(this, eardrumWatchArgsValidated);
   /*
   const ejectLast = ejectListener.bind(this, {
-    ...eardrumConfigureArgsValidated,
-    object: lastConfiguredObject.current
+    ...eardrumWatchArgsValidated,
+    object: lastWatched.current
   });
   */
 
@@ -32,10 +32,10 @@ export default function configure (this: Eardrum, eardrumConfigureArgs: EardrumC
   const _property = createPrivatePropName(property);
 
   // Clear previous event listener
-  /*if (this.lastConfiguredObject.current /* && this.lastConfiguredObject.current === object *//*) {
+  /*if (this.lastWatched.current /* && this.lastWatched.current === object *//*) {
     ejectLast();
   }*/
-  this.lastConfiguredObject.current = object;
+  this.lastWatched.current = object;
 
   // Attach initial event listener
   if (isFunction(handler)) {

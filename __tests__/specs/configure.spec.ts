@@ -3,7 +3,7 @@
  */
 var eardrum = require('../../dist/eardrum.js');
 
-describe('configure method helper', () => {
+describe('watch method helper', () => {
 	afterEach(() => {
 		eardrum.reset();
 		jest.resetAllMocks();
@@ -12,7 +12,7 @@ describe('configure method helper', () => {
 	it('GIVEN property does not exist on object THEN should add property to object', () => {
 		const object = {} as any;
 		const property = 'MY_PROPERTY';
-		eardrum.configure({ object, property });
+		eardrum.watch({ object, property });
 		expect(property in object).toBe(true);
 	});
 
@@ -21,13 +21,13 @@ describe('configure method helper', () => {
 		const object2 = {} as any;
 		const property = 'MY_PROPERTY';
 
-		eardrum.configure({
+		eardrum.watch({
 			object: object1,
 			property
 		});
 		expect(typeof object1[property] === 'undefined').toBe(true);
 
-		eardrum.configure({
+		eardrum.watch({
 			object: object2,
 			property,
 			value: undefined
@@ -41,14 +41,14 @@ describe('configure method helper', () => {
 		const property = 'MY_PROPERTY';
 		const value = 'MY_VALUE';
 
-		eardrum.configure({
+		eardrum.watch({
 			object: object1,
 			property,
 			value
 		});
 		expect(object1[property] === value).toBe(true);
 
-		eardrum.configure({
+		eardrum.watch({
 			object: object2,
 			property,
 			value: null
@@ -72,7 +72,7 @@ describe('configure method helper', () => {
 			options: useCapture
 		};
 
-		eardrum.configure({
+		eardrum.watch({
 			object, property, value,
 			handler,
 			listener: providedListener
@@ -98,13 +98,13 @@ describe('configure method helper', () => {
 		const additionalRefProps = {};
 		const target = document.createElement('div');
 
-		let receivedEardrumConfigureArgs: any = null;
+		let receivedEardrumWatchArgs: any = null;
 		let receivedEvent: any = null;
 		const listenerRemovalCondition = (ref: any, index: number, array: any[]): boolean => false;
 
-		const handler = jest.fn(function (e: Event, eardrumConfigureArgs: Object): void {
+		const handler = jest.fn(function (e: Event, eardrumWatchArgs: Object): void {
 			receivedEvent = e;
-			receivedEardrumConfigureArgs = eardrumConfigureArgs;
+			receivedEardrumWatchArgs = eardrumWatchArgs;
 		});
 		const useCapture = true;
 		const type = 'click';
@@ -114,7 +114,7 @@ describe('configure method helper', () => {
 			options: useCapture
 		};
 
-		eardrum.configure({
+		eardrum.watch({
 			object, property, value,
 			handler,
 			listener: providedListener,
@@ -129,21 +129,21 @@ describe('configure method helper', () => {
 
 		expect(handler).toHaveBeenCalledTimes(1);
 		expect(receivedEvent instanceof Event).toBe(true);
-		expect(receivedEardrumConfigureArgs.object).toStrictEqual(object);
-		expect(receivedEardrumConfigureArgs.property === property).toBe(true);
-		expect(receivedEardrumConfigureArgs.listener).toStrictEqual(providedListener);
-		expect(receivedEardrumConfigureArgs.value === value).toBe(true);
-		expect(receivedEardrumConfigureArgs.handler).toStrictEqual(handler);
-		expect(receivedEardrumConfigureArgs.listenerRemovalCondition).toStrictEqual(listenerRemovalCondition);
-		expect(receivedEardrumConfigureArgs.additionalRefProps).toStrictEqual(additionalRefProps);
-		expect(receivedEardrumConfigureArgs.additionalRefProps).toStrictEqual(additionalRefProps);
+		expect(receivedEardrumWatchArgs.object).toStrictEqual(object);
+		expect(receivedEardrumWatchArgs.property === property).toBe(true);
+		expect(receivedEardrumWatchArgs.listener).toStrictEqual(providedListener);
+		expect(receivedEardrumWatchArgs.value === value).toBe(true);
+		expect(receivedEardrumWatchArgs.handler).toStrictEqual(handler);
+		expect(receivedEardrumWatchArgs.listenerRemovalCondition).toStrictEqual(listenerRemovalCondition);
+		expect(receivedEardrumWatchArgs.additionalRefProps).toStrictEqual(additionalRefProps);
+		expect(receivedEardrumWatchArgs.additionalRefProps).toStrictEqual(additionalRefProps);
 	});
 
-	it('GIVEN changed value of configured property THEN should use listenerRemovalCondition function', () => {
+	it('GIVEN changed value of watched property THEN should use listenerRemovalCondition function', () => {
 		const property = 'MY_PROPERTY';
 		const object = { [property]: 'INITIAL_VALUE' };
 		const mockFn = jest.fn();
-		eardrum.configure({
+		eardrum.watch({
 			object,
 			property,
 			handler: jest.fn(),
@@ -163,7 +163,7 @@ describe('configure method helper', () => {
 		const type = 'keydown';
 		const useCapture = true;
 		const mockFn = jest.fn();
-		eardrum.configure({
+		eardrum.watch({
 			object,
 			property,
 			handler: jest.fn(),

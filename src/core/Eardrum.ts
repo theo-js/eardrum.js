@@ -1,14 +1,14 @@
-import configure from './configure';
+import watch from './watch';
 import reset from './reset';
 import EardrumRef from './Ref';
 
 export default class Eardrum {
 	constructor () {
-		this.configure = configure.bind(this);
+		this.watch = watch.bind(this);
 		this.reset = reset.bind(this);
 	}
 
-	public readonly configure: (args: EardrumConfigureArgs) => void;
+	public readonly watch: (args: EardrumWatchArgs) => void;
 	public readonly reset: () => void;
 
 	public readonly Eardrum = Eardrum;
@@ -16,7 +16,7 @@ export default class Eardrum {
 
 	// Stored values
 	public readonly refs: EardrumRef[] = [];
-	public readonly lastConfiguredObject: {
+	public readonly lastWatched: {
 		current: EardrumSupportedObject|null
 	} = { current: null };
 };

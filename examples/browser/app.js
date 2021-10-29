@@ -80,7 +80,7 @@ var moveButterfly = function (mouseEvent, butterfly) {
 
 // Create configurable object
 var object = {};
-// eardrum.configure parameters
+// eardrum.watch parameters
 var property = 'MY_PROPERTY';
 var value;
 var handler;
@@ -99,7 +99,7 @@ var listenerRemovalCondition;
 function configureObject (clickEvent) {
     var newButterfly = createButterfly(clickEvent);
 
-    eardrum.configure({
+    eardrum.watch({
         object: object,
         property: property,
         handler: typeof handler !== 'undefined' ? handler : function (mouseEvent, config) {
